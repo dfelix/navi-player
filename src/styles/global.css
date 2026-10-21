@@ -1,0 +1,414 @@
+/* Design tokens and base styles.
+
+   One fixed palette: near-black surfaces and a single teal accent. Every
+   colour, size and timing in the app's stylesheets refers to a token here. */
+
+:root {
+  color-scheme: dark;
+
+  /* Accent: the main action, what's active, progress. Text on it is black
+     (about 8:1 contrast). */
+  --accent: #14b8a6;
+  --accent-bright: #2dd4bf;
+  --accent-deep: #0d9488;
+  --on-accent: #000;
+
+  /* Greys, darkest first. */
+  --sidebar-fill: #000;
+  --player-fill: #000;
+  --page: #121212;
+  --raised: #1a1a1a;
+  --raised-hover: #262626;
+  --raised-press: #2c2c2c;
+  --line: #2f2f2f;
+  /* Field outlines need 3:1 against the page to count as visible. */
+  --field-line: #757575;
+  --track-fill: rgb(255 255 255 / 0.2);
+
+  --ink: #fff;
+  --sidebar-ink: #fff;
+  --sidebar-ink-soft: #b3b3b3;
+  --ink-soft: #a8a8a8;
+
+  --red: #f4737f;
+  --on-red: #000;
+  --amber: #ffa733;
+  --ok: #2dd4bf;
+  --focus: #fff;
+
+  /* Spacing (the density setting overrides the first three). */
+  --row: 44px;
+  --gutter: 14px;
+  --inset: 16px;
+
+  --round-s: 6px;
+  --round: 10px;
+  --round-l: 16px;
+
+  --sidebar-size: 224px;
+  --player-height: 78px;
+  --panel-size: 308px;
+
+  --type:
+    "Jost", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --type-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* Four weights only: body, list titles, labels and headings, page titles. */
+  --weight-body: 400;
+  --weight-title: 500;
+  --weight-label: 600;
+  --weight-head: 700;
+
+  --glide: cubic-bezier(0.2, 0.9, 0.3, 1);
+  --lift: 0 10px 32px rgb(0 0 0 / 0.3);
+
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none; /* no pull-to-refresh fighting the app's scrolling */
+}
+
+/* ---- Reset ---- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;
+  background: var(--page);
+  color: var(--ink);
+  font: 14px/1.5 var(--type);
+  font-optical-sizing: auto;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--line) content-box;
+
+  &:hover {
+    background-color: var(--ink-soft);
+  }
+}
+
+/* Keyboard focus: a white ring with a teal glow, visible from the sofa when
+   driving the app with a TV remote. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--round-s);
+  box-shadow: 0 0 0 5px rgb(20 184 166 / 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--raised);
+  color: var(--ink);
+  white-space: nowrap;
+  transition:
+    background-color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:hover {
+    background: var(--raised-hover);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: var(--weight-head);
+
+  &:hover {
+    background: var(--accent-bright);
+    transform: scale(1.03);
+  }
+  &:active {
+    background: var(--accent-deep);
+    transform: scale(0.98);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+
+  &:hover {
+    background: var(--raised);
+  }
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--ink);
+  transition:
+    background-color 0.15s var(--glide),
+    color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:hover {
+    background: var(--raised-hover);
+    transform: scale(1.06);
+  }
+  &:active {
+    transform: scale(0.92);
+  }
+  &.active {
+    color: var(--accent);
+  }
+  /* Bigger targets for fingers. */
+  @media (pointer: coarse) {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+/* Disabled: dimmed and inert, with no hover response. */
+:is(.btn, .icon-btn):is(:disabled, [aria-disabled="true"]) {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+
+  &.btn {
+    background: var(--raised);
+  }
+  &.btn-primary {
+    background: var(--accent);
+  }
+  &.btn-ghost,
+  &.icon-btn {
+    background: transparent;
+  }
+}
+
+/* ---- Form fields ---- */
+
+.field {
+  display: grid;
+  gap: 6px;
+
+  & label {
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: var(--weight-label);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--field-line);
+  border-radius: var(--round-s);
+  background: var(--page);
+  transition:
+    border-color 0.15s var(--glide),
+    box-shadow 0.15s var(--glide);
+
+  &:hover,
+  &:focus {
+    border-color: var(--ink);
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  &[aria-invalid="true"] {
+    border-color: var(--red);
+  }
+}
+
+/* ---- Page furniture ---- */
+
+.muted {
+  color: var(--ink-soft);
+}
+
+.page {
+  padding: 22px 26px 36px;
+}
+
+.page-title {
+  font-size: 25px;
+  font-weight: var(--weight-head);
+  letter-spacing: -0.02em;
+}
+
+.section-title {
+  margin-bottom: 12px;
+  font-size: 17px;
+  font-weight: var(--weight-label);
+  letter-spacing: -0.01em;
+}
+
+/* Loading, empty and error messages in the middle of a page or panel. */
+.center-state {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 14px;
+  padding: 64px 20px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* Shown while the app works out its server and saved session. */
+.app-splash {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.spinner {
+  width: 22px;
+  aspect-ratio: 1;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: turn 0.7s linear infinite;
+}
+.spinner-sm {
+  width: 15px; /* inside a button label */
+}
+@keyframes turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* A heart that's just been filled gives a little bounce. */
+.heart-pop {
+  animation: pop 0.34s var(--glide);
+}
+@keyframes pop {
+  40% {
+    transform: scale(1.35);
+  }
+  70% {
+    transform: scale(0.94);
+  }
+}
+
+/* Read by screen readers, not shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---- Phones and the installed app ---- */
+
+@media (max-width: 760px) {
+  /* Below 16px, iOS zooms into a field when it's tapped. */
+  .input,
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* Room for the notch and status bar in the installed app. */
+  .app-content,
+  .sidebar-inner,
+  .fs-player {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+}
+
+/* ---- Shared entrance animations ---- */
+
+/* Fade in. */
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+/* Fade in while moving up a little: lists, toasts, panels. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* Fade in from slightly smaller: menus and dialogs. */
+@keyframes grow {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}

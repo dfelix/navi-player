@@ -1,0 +1,233 @@
+/* The equaliser (Settings → Playback): presets, ten vertical band sliders
+   plus the pre-amp, and saved presets as chips. */
+
+.eq-block {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Notes appear with a short drop-in rather than jolting the layout. */
+.eq-warning,
+.eq-cors-hint {
+  animation: drop-in 0.26s var(--glide) both;
+}
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.eq-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 12px;
+  color: var(--amber);
+  font-size: 13px;
+}
+
+.eq-cors-hint {
+  margin-bottom: 8px;
+
+  & code {
+    padding: 1px 5px;
+    border-radius: var(--round-s);
+    background: var(--page);
+    font-size: 12px;
+  }
+}
+
+/* A <fieldset> used only to disable everything at once. */
+.eq-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  transition:
+    opacity 0.28s var(--glide),
+    filter 0.28s var(--glide);
+
+  &[disabled] {
+    opacity: 0.4;
+    filter: saturate(0.4);
+    pointer-events: none;
+  }
+}
+
+.eq-controls-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.eq-preset-select {
+  display: grid;
+  gap: 6px;
+  color: var(--ink-soft);
+  font-size: 13px;
+
+  & .settings-select {
+    min-width: 200px;
+  }
+}
+
+/* "Reset": the arrow turns back half a circle on hover. */
+.eq-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+
+  & svg {
+    transition: transform 0.45s var(--glide);
+  }
+  &:hover svg {
+    transform: rotate(-180deg);
+  }
+}
+
+/* ---- The bands ---- */
+
+.eq-graph {
+  display: flex;
+  gap: 4px;
+  padding: 18px 12px 8px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--round);
+  background: var(--page);
+}
+
+.eq-band {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 38px;
+}
+
+/* Between the pre-amp and the bands. */
+.eq-divider {
+  width: 1px;
+  margin-inline: 6px;
+  background: var(--line);
+}
+
+.eq-slider {
+  width: 6px;
+  height: 130px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  /* Vertical, low values at the bottom. */
+  writing-mode: vertical-lr;
+  direction: rtl;
+  appearance: slider-vertical; /* older Chromium and Safari */
+  transition:
+    transform 0.15s var(--glide),
+    filter 0.15s var(--glide);
+
+  /* The band being touched gets a little wider, without moving anything. */
+  &:hover,
+  &:active {
+    transform: scaleX(1.5);
+  }
+  &:active {
+    filter: brightness(1.15);
+  }
+}
+
+.eq-band-value {
+  min-height: 14px;
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.18s var(--glide);
+}
+/* Bands moved from zero use the accent, so the curve's shape is visible at once. */
+.eq-band-value-active {
+  color: var(--accent);
+}
+
+.eq-band-label {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: var(--weight-label);
+
+  .eq-band-preamp & {
+    color: var(--accent);
+  }
+}
+
+/* ---- Saved presets ---- */
+
+.eq-save-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  & .input {
+    flex: 1;
+  }
+  & .btn {
+    gap: 6px;
+  }
+}
+
+.eq-user-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eq-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--page);
+  color: var(--ink);
+  font-size: 13px;
+  transition:
+    border-color 0.15s var(--glide),
+    background-color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+  animation: rise 0.22s var(--glide) both;
+
+  &:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: none;
+  }
+}
+.eq-user-chip-active {
+  border-color: var(--accent);
+  background: var(--raised-press);
+}
+
+/* The ×, which turns a quarter on hover. */
+.eq-user-chip-del {
+  display: inline-grid;
+  place-items: center;
+  padding: 1px;
+  border-radius: 50%;
+  color: var(--ink-soft);
+  transition:
+    color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:hover {
+    color: var(--red);
+    transform: rotate(90deg);
+  }
+}

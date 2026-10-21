@@ -1,0 +1,51 @@
+/* Genre tiles: name and count at the bottom, a faint accent circle in the
+   corner, lifting a little on hover. */
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.genre-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  min-height: 96px;
+  padding: 20px;
+  overflow: hidden;
+  border-radius: var(--round-l);
+  background: var(--raised);
+  transition:
+    background-color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &::after {
+    position: absolute;
+    top: -27px;
+    right: -18px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgb(20 184 166 / 0.15);
+    content: "";
+  }
+  &:hover {
+    background: var(--raised-hover);
+    transform: translateY(-3px);
+  }
+}
+
+:is(.genre-name, .genre-count) {
+  z-index: 1;
+}
+.genre-name {
+  font-size: 17px;
+  font-weight: var(--weight-label);
+  letter-spacing: -0.01em;
+}
+.genre-count {
+  font-size: 12px;
+}

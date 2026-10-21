@@ -1,0 +1,81 @@
+/* Range sliders (seek bar, volume, settings). The track fills with the accent up to
+   --filled, set by the component; the knob shows on hover and keyboard focus. */
+
+.slider {
+  --knob-size: 13px;
+  --track-size: 5px;
+
+  width: 100%;
+  height: 16px;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  /* Chromium and Safari: one track, painted in two colours. */
+  &::-webkit-slider-runnable-track {
+    height: var(--track-size);
+    border-radius: 999px;
+    background: linear-gradient(
+      to right,
+      var(--accent) var(--filled, 0%),
+      var(--track-fill) var(--filled, 0%)
+    );
+  }
+  &::-webkit-slider-thumb {
+    width: var(--knob-size);
+    height: var(--knob-size);
+    margin-top: calc((var(--track-size) - var(--knob-size)) / 2);
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+    opacity: 0;
+    transition: opacity 0.15s var(--glide);
+    appearance: none;
+  }
+  &:is(:hover, :focus-visible)::-webkit-slider-thumb {
+    opacity: 1;
+  }
+
+  /* Firefox: a track and a separate progress bar. */
+  &::-moz-range-track,
+  &::-moz-range-progress {
+    height: var(--track-size);
+    border-radius: 999px;
+  }
+  &::-moz-range-track {
+    background: var(--track-fill);
+  }
+  &::-moz-range-progress {
+    background: var(--accent);
+  }
+  &::-moz-range-thumb {
+    width: var(--knob-size);
+    height: var(--knob-size);
+    border: 0;
+    border-radius: 50%;
+    background: var(--ink);
+    opacity: 0;
+    transition: opacity 0.15s var(--glide);
+  }
+  &:is(:hover, :focus-visible)::-moz-range-thumb {
+    opacity: 1;
+  }
+
+  /* Not usable right now (a stream that can't seek yet): it still shows
+     progress, but isn't a control. */
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+
+    &::-webkit-slider-thumb {
+      opacity: 0;
+    }
+    &::-moz-range-thumb {
+      opacity: 0;
+    }
+  }
+}

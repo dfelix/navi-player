@@ -1,0 +1,113 @@
+/* Settings → Advanced → Developer: the API inspector and the log viewer. */
+
+.debug-panel {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--round);
+  background: var(--page);
+}
+
+/* ---- API inspector ---- */
+
+.debug-endpoints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.debug-ep {
+  padding: 6px 12px;
+  font: 12px var(--type-mono);
+}
+
+.debug-url {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--ink-soft);
+  font-size: 11px;
+  word-break: break-all;
+
+  & code {
+    font-family: var(--type-mono);
+  }
+}
+
+.debug-output {
+  max-height: 360px;
+  margin-top: 12px;
+  padding: 14px;
+  overflow: auto;
+  border-radius: var(--round-s);
+  background: var(--player-fill);
+  font: 12px/1.5 var(--type-mono);
+  white-space: pre;
+}
+
+/* ---- Log viewer ---- */
+
+.log-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.log-count {
+  flex: 1;
+  font-size: 12px;
+}
+.log-empty {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.log-list {
+  list-style: none;
+  white-space: normal;
+}
+
+/* time | level | [area] | message; on phones the message gets its own line. */
+.log-entry {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  gap: 8px;
+  padding-block: 2px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: auto auto 1fr;
+
+    & .log-text {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+:is(.log-time, .log-tag) {
+  color: var(--ink-soft);
+}
+
+.log-level {
+  font-size: 10px;
+  line-height: 18px;
+  text-transform: uppercase;
+
+  .log-error & {
+    color: var(--red);
+  }
+  .log-warn & {
+    color: var(--amber);
+  }
+  .log-info & {
+    color: var(--accent);
+  }
+  .log-debug & {
+    color: var(--ink-soft);
+  }
+}
+
+.log-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

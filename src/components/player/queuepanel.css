@@ -1,0 +1,239 @@
+/* The queue side panel (and the panel frame the lyrics panel shares): what's
+   played, what's playing, what's next, and what Infinite radio would add. */
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.side-panel-head {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 18px 12px;
+}
+
+.side-panel-title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: var(--weight-label);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queue-head-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+}
+.queue-clear {
+  padding: 6px 11px;
+  font-size: 12px;
+}
+
+/* ---- "Playing from … Radio" ---- */
+
+.queue-station {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  margin: 0 10px 8px;
+  padding: 10px 12px;
+  border-radius: var(--round);
+  background: rgb(20 184 166 / 0.1);
+}
+.queue-station-icon {
+  flex: none;
+  color: var(--accent);
+}
+.queue-station-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.queue-station-kicker {
+  font-size: 11px;
+}
+.queue-station-name {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: var(--weight-label);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ---- The list ---- */
+
+.queue-list {
+  flex: 1;
+  padding: 0 10px 16px;
+  overflow-y: auto;
+}
+
+/* Rows rise in as they're added; moving one keeps its element, so a reorder
+   doesn't replay it. */
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: var(--round);
+  cursor: grab;
+  transition: background-color 0.12s var(--glide);
+  animation: rise 0.22s var(--glide) both;
+
+  &:hover {
+    background: var(--raised-hover);
+
+    & :is(.queue-grip, .queue-remove) {
+      opacity: 1;
+    }
+  }
+}
+.queue-item-current {
+  background: rgb(20 184 166 / 0.12);
+}
+/* Where a dragged row would land. */
+.queue-item-over {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.queue-grip {
+  display: grid;
+  flex: none;
+  place-items: center;
+  color: var(--ink-soft);
+  opacity: 0;
+}
+
+.queue-cover {
+  border-radius: var(--round-s);
+}
+
+.queue-meta {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+:is(.queue-title, .queue-artist) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-title {
+  font-size: 13px;
+
+  &.accent-text {
+    color: var(--accent);
+    font-weight: var(--weight-label);
+  }
+}
+.queue-artist {
+  font-size: 11px;
+}
+
+.queue-dur {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.queue-remove {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  opacity: 0;
+}
+
+/* The little "radio" label on tracks Infinite radio added. */
+.queue-auto-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding-inline: 5px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+/* ---- Already played (folded away by default) ---- */
+
+.queue-history-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 2px;
+  padding: 6px 8px;
+  border-radius: var(--round-s);
+  color: var(--ink-soft);
+  font-size: 12px;
+  text-align: left;
+
+  &:hover {
+    background: var(--raised-hover);
+    color: var(--ink);
+  }
+}
+
+.queue-item-played {
+  opacity: 0.55;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+.queue-played-index {
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- What Infinite radio would add next ---- */
+
+.queue-suggest-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 8px 6px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: var(--weight-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: rise 0.26s var(--glide) both;
+}
+
+.queue-suggest {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.62;
+  transition:
+    opacity 0.15s var(--glide),
+    background-color 0.12s var(--glide);
+
+  &:hover {
+    background: var(--raised-hover);
+    opacity: 1;
+  }
+}
+.queue-suggest-add {
+  color: var(--accent);
+  opacity: 1;
+}

@@ -1,0 +1,202 @@
+/* Listening history: a log by day, with the time first. Rows are tighter
+   than a track list's, since the time matters more than the cover. */
+
+.history-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 22px;
+
+  & h1 {
+    font-size: 25px;
+    font-weight: var(--weight-head);
+    letter-spacing: -0.02em;
+  }
+}
+.history-sub {
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Today / week / month, as one segmented control. */
+.history-ranges {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--round);
+  background: var(--raised);
+
+  & .btn {
+    padding: 6px 12px;
+    font-size: 12.5px;
+  }
+}
+.history-range-active {
+  background: var(--accent) !important;
+  color: var(--on-accent);
+  font-weight: var(--weight-label);
+}
+
+.btn-danger {
+  background: var(--red);
+  color: var(--on-red);
+  font-weight: var(--weight-label);
+}
+
+.history-section-title {
+  margin: 26px 0 10px;
+  font-size: 15px;
+  font-weight: var(--weight-label);
+}
+.history-day-count {
+  font-size: 13px;
+  font-weight: var(--weight-body);
+}
+
+/* Shared: one line, cut short with an ellipsis. */
+:is(.history-top-title, .history-title, .history-album),
+:is(.history-top-meta, .history-meta) .muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Most played in the range ---- */
+
+.history-top-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px;
+}
+
+.history-top-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: var(--round-s);
+  background: var(--raised);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--raised-hover);
+  }
+}
+
+.history-top-meta {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+
+  & .muted {
+    font-size: 12px;
+  }
+}
+
+.history-plays {
+  flex: none;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- The log ---- */
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* time | play | cover | title | album | length | queue */
+.history-row {
+  display: grid;
+  grid-template-columns: 52px 26px auto 1fr minmax(0, 0.7fr) 44px 38px;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 8px;
+  border-radius: var(--round-s);
+
+  &:hover {
+    background: var(--raised);
+
+    & :is(.history-play, .history-queue) {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 46px 0 auto 1fr 40px 0;
+  }
+}
+
+.history-time,
+.history-dur {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.history-dur {
+  text-align: right;
+}
+
+.history-play {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--ink);
+  opacity: 0;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+}
+
+.history-cover {
+  flex: none;
+  border-radius: 3px;
+}
+
+.history-meta {
+  display: grid;
+  min-width: 0;
+  font-size: 13.5px;
+
+  & .muted {
+    font-size: 12px;
+  }
+}
+
+.history-album {
+  font-size: 12.5px;
+}
+:is(.history-link, .history-album):hover {
+  text-decoration: underline;
+}
+
+.history-queue {
+  width: 30px;
+  height: 30px;
+  opacity: 0;
+}
+
+/* Narrow: no play button, album or queue button. */
+@media (max-width: 900px) {
+  .history-play,
+  .history-album,
+  .history-queue {
+    display: none;
+  }
+}

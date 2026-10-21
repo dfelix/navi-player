@@ -1,0 +1,86 @@
+/* The sign-in screen: one card on a dark page with a teal glow at the top. */
+
+.login-screen {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 24px;
+  background: radial-gradient(120% 120% at 50% 0%, #163e39, transparent 60%), var(--page);
+}
+
+.login-card {
+  width: min(100%, 420px);
+  padding: 34px;
+  border: 1px solid var(--line);
+  border-radius: var(--round-l);
+  background: var(--raised);
+  box-shadow: var(--lift);
+
+  @media (max-width: 480px) {
+    padding: 24px 20px;
+  }
+}
+
+.login-brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 26px;
+
+  & h1 {
+    margin-bottom: 4px;
+    font-size: 22px;
+    font-weight: var(--weight-head);
+    letter-spacing: -0.01em;
+  }
+  & p {
+    font-size: 13px;
+  }
+}
+.login-logo {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.login-form {
+  display: grid;
+  gap: 16px;
+}
+
+/* The show/hide button sits inside the password field, at its right end. */
+.login-password {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  & .input {
+    padding-right: 44px;
+  }
+}
+.login-password-toggle {
+  position: absolute;
+  right: 4px;
+  width: 36px;
+  height: 36px;
+}
+
+.login-submit {
+  justify-content: center;
+  margin-top: 4px;
+  padding: 12px;
+  border-radius: 999px;
+  font-weight: var(--weight-head);
+}
+
+.login-error {
+  padding: 10px 13px;
+  border: 1px solid #864249;
+  border-radius: var(--round);
+  background: #4a2c30;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}

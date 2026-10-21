@@ -1,0 +1,38 @@
+# NaviPlayer alone, for a Navidrome that's already running somewhere.
+#
+# VITE_NAVIDROME_URL (in a .env file beside this one, or in your shell) is
+# Navidrome's address as this container reaches it, for example:
+#   http://navidrome:4533              same compose network
+#   http://host.docker.internal:4533   same machine, Docker Desktop
+#   http://192.168.1.50:4533           elsewhere on your network
+# Browsers only ever talk to NaviPlayer, which passes requests on.
+# After changing a setting, `docker compose up -d` restarts it with the new one.
+#
+# Serve it over HTTPS before opening port 8680 to the internet (README.md).
+# To run Navidrome as well, see docker-compose.full.yml.
+
+services:
+  navi-player:
+    build:
+      context: .
+    image: navi-player:latest
+    container_name: navi-player
+    restart: unless-stopped
+    ports:
+      - "8680:8080"
+    environment:
+      VITE_NAVIDROME_URL: ${VITE_NAVIDROME_URL:?Set VITE_NAVIDROME_URL to your Navidrome server}
+      VITE_APP_NAME: ${VITE_APP_NAME:-} # the name people see; empty means NaviPlayer
+
+      # Uploads, for admins. Off unless MUSIC_DIR is set and the folder
+      # Navidrome scans is mounted there (see volumes), writable by uid 1000.
+      MUSIC_DIR: ${MUSIC_DIR:-}
+      UPLOAD_MAX_MB: ${UPLOAD_MAX_MB:-} # per file or ZIP; default 2048
+
+      # Link-preview cards in chat apps. A read-only Navidrome account; it
+      # stays on the server. Both empty: no previews.
+      NAVIDROME_OG_USER: ${NAVIDROME_OG_USER:-}
+      NAVIDROME_OG_PASS: ${NAVIDROME_OG_PASS:-}
+    # For uploads, mount your library (host folder : MUSIC_DIR):
+    # volumes:
+    #   - ${MUSIC_HOST_DIR:-./music}:/music

@@ -1,0 +1,55 @@
+/* The lyrics side panel. Synced lyrics follow the song: past lines fade, the
+   current one is large and in the accent colour, and any line can be clicked to jump there. */
+
+.lyrics-body {
+  flex: 1;
+  padding: 8px 22px 40px;
+  overflow-y: auto;
+}
+
+.lyrics-line {
+  padding-block: 4px;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+  transition:
+    color 0.2s var(--glide),
+    font-size 0.2s var(--glide);
+
+  .lyrics-synced & {
+    font-size: 17px;
+    opacity: 0.55;
+    cursor: pointer;
+  }
+}
+.lyrics-line-past {
+  opacity: 0.4 !important;
+}
+.lyrics-line-active {
+  color: var(--accent) !important;
+  font-size: 20px !important;
+  font-weight: var(--weight-label);
+  opacity: 1 !important;
+}
+
+/* "From LRCLIB · matched to …": naming the matched recording explains timings
+   that drift (a different release was matched). */
+.lyrics-credit {
+  margin-bottom: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11.5px;
+  line-height: 1.4;
+
+  & em {
+    color: var(--ink);
+    font-style: normal;
+  }
+}
+
+.lyrics-hint {
+  max-width: 34ch;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}

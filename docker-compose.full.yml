@@ -1,0 +1,48 @@
+# Navidrome and NaviPlayer together, sharing your music folder: every feature,
+# uploads included, with nothing to set up between them.
+#
+# 1. Set MUSIC_HOST_DIR to your music folder (or put the music in ./music).
+# 2. docker compose -f docker-compose.full.yml up -d
+# 3. Visit http://localhost:4533 once to create Navidrome's admin account.
+# 4. Use NaviPlayer at http://localhost:8680.
+#
+# NaviPlayer reaches Navidrome on the compose network. Admins can upload from
+# the sidebar; new files land in the shared folder and Navidrome rescans.
+
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    restart: unless-stopped
+    environment:
+      ND_LOGLEVEL: info
+      ND_SCANSCHEDULE: 1h
+    ports:
+      # For creating the admin account. Remove it later if NaviPlayer should
+      # be the only way in.
+      - "4533:4533"
+    volumes:
+      - ${MUSIC_HOST_DIR:-./music}:/music
+      - ./nd-data:/data
+
+  navi-player:
+    build:
+      context: .
+    image: navi-player:latest
+    container_name: navi-player
+    restart: unless-stopped
+    depends_on:
+      - navidrome
+    ports:
+      - "8680:8080"
+    environment:
+      VITE_NAVIDROME_URL: http://navidrome:4533
+      VITE_APP_NAME: ${VITE_APP_NAME:-} # the name people see; empty means NaviPlayer
+      MUSIC_DIR: /music
+      UPLOAD_MAX_MB: ${UPLOAD_MAX_MB:-} # per file or ZIP; default 2048
+      # Link-preview cards: a read-only Navidrome account (create it in
+      # Navidrome's user settings). Both empty: no previews.
+      NAVIDROME_OG_USER: ${NAVIDROME_OG_USER:-}
+      NAVIDROME_OG_PASS: ${NAVIDROME_OG_PASS:-}
+    volumes:
+      - ${MUSIC_HOST_DIR:-./music}:/music

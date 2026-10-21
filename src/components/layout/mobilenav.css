@@ -1,0 +1,46 @@
+/* The tab bar along the bottom on phones. Not shown on larger screens. */
+
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .mobile-nav {
+    z-index: 40;
+    display: flex;
+    flex: none;
+    justify-content: space-around;
+    padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid var(--line);
+    background: var(--sidebar-fill);
+  }
+
+  .mobile-nav-item {
+    display: grid;
+    flex: 1;
+    justify-items: center;
+    align-content: center;
+    gap: 3px;
+    min-height: 52px;
+    padding: 6px 2px;
+    border-radius: var(--round);
+    color: var(--sidebar-ink-soft);
+    font-size: 10px;
+    font-weight: var(--weight-label);
+    letter-spacing: 0.01em;
+    transition:
+      color 0.15s var(--glide),
+      background-color 0.15s var(--glide);
+
+    & span {
+      line-height: 1;
+    }
+    &:active {
+      background: rgb(255 255 255 / 0.08);
+    }
+  }
+
+  .mobile-nav-item-active {
+    color: var(--accent);
+  }
+}

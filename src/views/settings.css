@@ -1,0 +1,206 @@
+/* Settings: tabs down the left, blocks of rows on the right (label and hint,
+   control at the end). */
+
+.settings-page {
+  max-width: 980px;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+/* ---- Tabs ---- */
+
+.settings-tabs {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  align-self: start;
+  gap: 2px;
+}
+
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 13px;
+  border-radius: var(--round);
+  color: var(--ink-soft);
+  font-weight: var(--weight-title);
+  text-align: left;
+  transition:
+    background-color 0.15s var(--glide),
+    color 0.15s var(--glide);
+
+  &:hover {
+    background: var(--raised);
+    color: var(--ink);
+  }
+}
+.settings-tab-active {
+  background: var(--raised);
+  color: var(--ink);
+}
+
+/* ---- Blocks and rows ---- */
+
+.settings-content {
+  min-width: 0;
+}
+.settings-section {
+  display: grid;
+  gap: 28px;
+}
+
+.settings-block {
+  margin-bottom: 22px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--round-l);
+  background: var(--raised);
+}
+
+.settings-block-title {
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: var(--weight-label);
+}
+/* A title with something beside it. */
+.settings-block-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+
+  & .settings-block-title {
+    margin-bottom: 0;
+  }
+}
+
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}
+.settings-row-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.settings-row-hint {
+  font-size: 12px;
+}
+.settings-row-control {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+/* ---- Controls ---- */
+
+:is(.settings-select, .settings-text) {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.settings-select {
+  width: auto;
+  min-width: 150px;
+}
+.settings-text {
+  width: 220px;
+}
+
+.settings-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 220px;
+
+  & .slider {
+    flex: 1;
+  }
+}
+.settings-range-value {
+  width: 56px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* On/off switch. */
+.toggle {
+  width: 44px;
+  height: 26px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--line);
+  transition: background-color 0.15s var(--glide);
+}
+.toggle-knob {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.18s var(--glide);
+}
+.toggle-on {
+  background: var(--accent);
+
+  & .toggle-knob {
+    transform: translateX(18px);
+  }
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+.settings-import-msg {
+  margin-top: 12px;
+  color: var(--accent);
+  font-size: 13px;
+}
+.settings-import-err {
+  color: var(--red);
+}
+
+/* ---- Connection: the server and how audio reaches you ---- */
+
+.server-info-rows {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.server-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  font-size: 13px;
+
+  & > span:last-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-align: right;
+  }
+}
+.server-info-formats {
+  font: 12px var(--type-mono);
+  overflow-wrap: anywhere; /* a long list mustn't widen the panel */
+}

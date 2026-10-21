@@ -1,0 +1,17 @@
+{
+  // Used by ts-jest to transpile sources for Jest, which
+  // runs CommonJS. Type checking is vue-tsc's job (npm run type-check).
+  "extends": "./tsconfig.test.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node10",
+    // Jest transpiles file by file (isolatedModules), so resolution mode is
+    // irrelevant here; Node10 is simply the one CommonJS output allows.
+    "ignoreDeprecations": "6.0",
+    "verbatimModuleSyntax": false,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": false,
+    "noEmit": false
+  }
+}

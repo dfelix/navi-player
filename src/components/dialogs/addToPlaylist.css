@@ -1,0 +1,53 @@
+/* "Add to playlist": a new playlist at the top, existing ones below. */
+
+.atp-new {
+  display: flex;
+  gap: 10px;
+}
+
+/* A line, "or", a line. */
+.atp-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 12px;
+  color: var(--ink-soft);
+  font-size: 12px;
+
+  &::before,
+  &::after {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    content: "";
+  }
+}
+
+.atp-list {
+  display: grid;
+  gap: 2px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.atp-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border-radius: var(--round);
+  text-align: left;
+  transition: background-color 0.15s var(--glide);
+
+  &:hover {
+    background: var(--raised-hover);
+  }
+}
+.atp-item-name {
+  flex: 1;
+}
+
+.atp-empty {
+  padding: 16px;
+  text-align: center;
+}

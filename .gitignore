@@ -1,0 +1,19 @@
+node_modules
+dist
+*.local
+.DS_Store
+.vite
+dist-server
+coverage
+.eslintcache
+test-results
+playwright-report
+
+# Local secrets — never commit real server credentials
+.env
+.env.*
+!.env.example
+
+# Docker compose runtime data (from docker-compose.full.yml)
+/nd-data
+/music

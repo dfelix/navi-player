@@ -1,0 +1,32 @@
+/* The album page's backdrop: the cover's colours, blurred behind the header
+   and fading out towards the track list. */
+
+.album-page {
+  position: relative;
+
+  /* Everything real sits above the backdrop. */
+  & > :not(.album-backdrop) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.album-backdrop {
+  position: absolute;
+  inset: -22px -26px auto;
+  z-index: 0;
+  height: 340px;
+  background: center / cover;
+  opacity: 0.5;
+  filter: blur(46px) saturate(1.25);
+  pointer-events: none;
+  mask-image: linear-gradient(rgb(0 0 0 / 0.85), transparent);
+  /* The colours arrive after the page does, so they ease in. */
+  animation: backdrop-in 0.7s var(--glide) both;
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}

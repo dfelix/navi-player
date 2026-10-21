@@ -1,0 +1,87 @@
+/* Dropdown and right-click menus (Reka UI). */
+
+.ctx-trigger {
+  display: contents;
+}
+
+.menu-content {
+  /* Menus are placed on <body>, so they must outrank every layer that can open
+     one: dialogs (200) and the full-screen player (250). */
+  z-index: 1000;
+  min-width: 172px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--round);
+  background: var(--raised);
+  box-shadow: var(--lift);
+  transform-origin: var(
+    --reka-dropdown-menu-content-transform-origin,
+    var(--reka-context-menu-content-transform-origin)
+  );
+  animation: grow 0.12s var(--glide);
+}
+
+.menu-heading {
+  padding: 6px 9px 4px;
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: var(--weight-label);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.menu-separator {
+  height: 1px;
+  margin: 4px 6px;
+  background: var(--line);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 9px;
+  border-radius: var(--round-s);
+  outline: none;
+  color: var(--ink);
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+
+  &[data-highlighted] {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  &[data-disabled] {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+}
+
+.menu-item-danger {
+  color: var(--red);
+
+  &[data-highlighted] {
+    background: var(--red);
+    color: var(--on-red);
+  }
+}
+
+/* On/off rows: the tick sits at the right edge, like a column of switches. */
+.menu-item-toggle {
+  padding-right: 7px;
+
+  &[data-highlighted] .menu-check {
+    color: var(--on-accent);
+  }
+}
+.menu-item-label {
+  flex: 1;
+}
+.menu-check {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 16px;
+  color: var(--accent);
+}

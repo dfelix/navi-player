@@ -1,0 +1,47 @@
+/* Rebinding shortcuts: one row per action, with a key button that records the
+   next key pressed. */
+
+.shortcut-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 4px;
+  border-bottom: 1px solid var(--line);
+}
+.shortcut-label {
+  flex: 1;
+}
+
+/* "Also used by …" */
+.shortcut-conflict {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--red);
+  font-size: 11px;
+}
+
+.shortcut-key {
+  min-width: 130px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--round-s);
+  background: var(--page);
+  font: 12px var(--type-mono);
+  text-align: center;
+  transition: border-color 0.15s var(--glide);
+
+  &:hover {
+    border-color: var(--ink-soft);
+  }
+}
+/* Waiting for a key. */
+.shortcut-key-recording {
+  border-color: var(--accent);
+  color: var(--accent);
+}

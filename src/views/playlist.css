@@ -1,0 +1,130 @@
+/* Playlist page: the cover with its "change photo" button, renaming in
+   place, the public/private switch, and rows that can be dragged into order. */
+
+.pl-art {
+  position: relative;
+
+  &:hover .pl-art-edit {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Slides up over the bottom of the cover on hover. */
+.pl-art-edit {
+  position: absolute;
+  inset: auto 8px 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: var(--round);
+  background: rgb(0 0 0 / 0.78);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 13px;
+  font-weight: var(--weight-title);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:focus-visible {
+    opacity: 1;
+    transform: none;
+  }
+  &:hover {
+    background: rgb(0 0 0 / 0.9);
+  }
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.pl-rename {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  & .input {
+    max-width: 360px;
+    padding: 6px 10px;
+    font-size: 24px;
+    font-weight: var(--weight-head);
+  }
+}
+
+.pl-saving {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Lock for private (only you), globe for public (everyone on the server). */
+.pl-visibility {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(127 127 127 / 0.08);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: var(--weight-label);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background-color 0.15s;
+
+  &:not(:disabled):hover {
+    border-color: var(--ink-soft);
+    color: var(--ink);
+  }
+  &:disabled {
+    opacity: 0.8;
+    cursor: default;
+  }
+}
+.pl-visibility-on {
+  border-color: rgb(20 184 166 / 0.45);
+  background: rgb(20 184 166 / 0.12);
+  color: var(--accent);
+}
+
+/* ---- Rows ---- */
+
+.pl-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--round);
+  /* Playlists aren't paged, so they're the longest lists: rows off screen
+     skip rendering (and stay in the page, so dragging onto them works). */
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--row);
+
+  &:hover .pl-grip {
+    opacity: 1;
+  }
+}
+/* Where a dragged row would land. */
+.pl-row-over {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.pl-grip {
+  display: grid;
+  flex: 0 0 20px;
+  place-items: center;
+  color: var(--ink-soft);
+  opacity: 0;
+  cursor: grab;
+}
+.pl-row-track {
+  flex: 1;
+  min-width: 0;
+}

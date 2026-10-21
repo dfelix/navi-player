@@ -1,0 +1,42 @@
+/* The bar that appears while tracks are selected. It floats above the player
+   bar (not in its place), so the transport stays at hand. */
+
+.selection-bar {
+  position: sticky;
+  bottom: 12px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 16px 0 4px;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--round);
+  background: var(--raised);
+  box-shadow: var(--lift);
+  animation: rise 0.14s var(--glide);
+}
+
+.selection-count {
+  font-size: 13px;
+  font-weight: var(--weight-label);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.selection-actions {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  & .btn {
+    gap: 6px;
+    padding: 6px 11px;
+    font-size: 12.5px;
+  }
+}
+
+.selection-clear {
+  flex: none;
+}

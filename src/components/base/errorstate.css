@@ -1,0 +1,48 @@
+/* What the error boundary shows when part of the page fails. Kept plain on
+   purpose: it must still work when the failure was in styling or data. */
+
+.error-state {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  min-height: 320px;
+  padding: 48px 24px;
+}
+
+.error-state-inner {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  width: min(100%, 560px);
+
+  & h2 {
+    font-size: 20px;
+    font-weight: var(--weight-label);
+  }
+  & > p {
+    line-height: 1.55;
+  }
+}
+
+/* The technical message, for a bug report. */
+.error-state-detail {
+  width: 100%;
+  max-height: 180px;
+  margin-top: 4px;
+  padding: 10px 12px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--round-s);
+  background: var(--raised);
+  color: var(--ink-soft);
+  font: 12px/1.5 var(--type-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.error-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}

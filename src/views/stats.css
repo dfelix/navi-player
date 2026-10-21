@@ -1,0 +1,157 @@
+/* Stats: number cards, then most-played lists. */
+
+.stats-section + .stats-section {
+  margin-top: 36px;
+}
+
+.stats-heading {
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: var(--weight-label);
+  letter-spacing: 0.01em;
+}
+
+.stats-note {
+  max-width: 60ch;
+  margin-top: 20px;
+  font-size: 13px;
+}
+
+/* ---- Cards ---- */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--gutter);
+}
+
+.stat-card {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--round-l);
+  background: var(--raised);
+  transition:
+    background-color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:hover {
+    background: var(--raised-hover);
+    transform: translateY(-2px);
+  }
+}
+
+.stat-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 8px;
+  border-radius: var(--round);
+  background: var(--raised-press);
+  color: var(--accent);
+}
+
+.stat-value {
+  font-size: 34px;
+  font-weight: var(--weight-head);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: var(--weight-title);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* A second line under the label, e.g. "12% of the library": the number and
+   its label are read first. */
+.stat-hint {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* ---- Most played ---- */
+
+.top-lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: start;
+  gap: var(--gutter);
+}
+
+.top-list {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--round-l);
+  background: var(--raised);
+}
+
+.top-list-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: var(--weight-title);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.top-rows {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: var(--round);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s var(--glide);
+
+  &:hover {
+    background: var(--raised-hover);
+  }
+  & .cover {
+    flex: none;
+  }
+}
+
+.top-rank {
+  flex: 0 0 16px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  opacity: 0.55;
+}
+
+/* Must be able to shrink, or a long title pushes the count out of the card. */
+.top-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+:is(.top-name, .top-sub) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.top-sub,
+.top-plays {
+  font-size: 12px;
+}
+.top-plays {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}

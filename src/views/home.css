@@ -1,0 +1,39 @@
+/* Home: the greeting with Surprise Me, then rows of albums. */
+
+.home-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.home-greeting {
+  margin-bottom: 0;
+}
+.home-surprise:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.home-section {
+  margin-bottom: 26px;
+}
+.home-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.home-seeall {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--ink-soft);
+  font-size: 13px;
+
+  &:hover {
+    color: var(--ink);
+  }
+}

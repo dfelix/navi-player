@@ -1,0 +1,219 @@
+/* The page frame: sidebar | content | side panel (queue or lyrics), with the
+   player bar along the bottom. On phones it becomes one column with a drawer
+   for the sidebar and a tab bar at the bottom. */
+
+.app-shell {
+  --sidebar-now: var(--sidebar-size);
+  --panel-now: 0px;
+
+  position: relative;
+  display: grid;
+  grid-template:
+    "sidebar content side" 1fr
+    "nowplaying nowplaying nowplaying" auto
+    / var(--sidebar-now) 1fr var(--panel-now);
+  height: 100%;
+  transition: grid-template-columns 0.34s var(--glide);
+
+  /* The sidebar's column shrinks to nothing; its contents keep their width
+     and are clipped, so nothing reflows while it moves. */
+  &.app-shell-collapsed {
+    --sidebar-now: 0px;
+
+    & .sidebar {
+      pointer-events: none;
+    }
+  }
+}
+.app-shell-side {
+  --panel-now: var(--panel-size);
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  grid-area: content;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--page);
+}
+.app-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Every page arrives with a short rise. */
+.route-view {
+  animation: rise 0.22s var(--glide) both;
+}
+
+/* ---- Side panel ---- */
+
+.side-panel-wrapper {
+  position: relative;
+  grid-area: side;
+  width: var(--panel-now);
+  height: 100%;
+  overflow: hidden;
+  border-left: 1px solid transparent;
+  background: var(--page);
+  transition:
+    width 0.34s var(--glide),
+    border-color 0.34s var(--glide);
+
+  .app-shell-side & {
+    border-left-color: var(--line);
+  }
+}
+
+/* Queue and lyrics are both mounted; the one not shown fades out and slides
+   aside. */
+.side-panel-item {
+  position: absolute;
+  inset: 0 auto 0 0;
+  display: flex;
+  flex-direction: column;
+  width: var(--panel-size);
+  opacity: 0;
+  transform: translateX(12px);
+  pointer-events: none;
+  transition:
+    opacity 0.22s var(--glide),
+    transform 0.22s var(--glide);
+}
+.side-panel-item-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* ---- Sidebar edge: the line between sidebar and page, which hides or
+   shows the sidebar when clicked ---- */
+
+.sidebar-edge {
+  position: absolute;
+  inset: 0 auto var(--player-height) var(--sidebar-now);
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 12px;
+  margin-left: -6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: left 0.34s var(--glide);
+
+  /* The divider itself. */
+  &::before {
+    position: absolute;
+    inset: 0 auto 0 6px;
+    width: 1px;
+    background: var(--line);
+    content: "";
+    transition:
+      background-color 0.15s var(--glide),
+      width 0.15s var(--glide);
+  }
+  &:hover::before {
+    width: 2px;
+    background: #1f8176; /* accent, mixed down into the border */
+  }
+  &:is(:hover, :focus-visible) .sidebar-edge-chevron {
+    opacity: 1;
+    transform: none;
+    color: var(--ink);
+  }
+}
+
+.sidebar-edge-chevron {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--raised);
+  color: var(--ink-soft);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.22);
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 0.15s var(--glide),
+    transform 0.15s var(--glide),
+    color 0.15s var(--glide);
+
+  /* Points left (hide) while the sidebar is open, right (show) when not. */
+  & svg {
+    transform: rotate(180deg);
+    transition: transform 0.22s var(--glide);
+
+    .app-shell-collapsed & {
+      transform: none;
+    }
+  }
+}
+
+/* Behind the phone drawer; nothing on desktop. */
+.drawer-scrim {
+  display: none;
+}
+
+/* ---- Phones and small tablets ---- */
+
+@media (max-width: 760px) {
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+  }
+  .app-content {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* The sidebar slides in from the left, over the page. */
+  .sidebar,
+  .app-shell-collapsed .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 300;
+    width: min(82vw, 320px);
+    overflow: visible;
+    transform: translateX(-100%);
+    pointer-events: auto;
+    transition: transform 0.28s var(--glide);
+
+    .app-shell-drawer-open & {
+      transform: none;
+    }
+  }
+  .sidebar-inner {
+    width: 100%;
+    box-shadow: 0 0 40px rgb(0 0 0 / 0.45);
+  }
+
+  .drawer-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 290;
+    display: block;
+    border: 0;
+    background: rgb(0 0 0 / 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.28s var(--glide);
+
+    .app-shell-drawer-open & {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  /* Desktop-only: the edge handle, and the side panels (phones use the
+     full-screen player instead). */
+  .sidebar-edge,
+  .side-panel-wrapper {
+    display: none;
+  }
+}

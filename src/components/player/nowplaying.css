@@ -1,0 +1,197 @@
+/* The player bar along the bottom: the track on the left, transport and seek
+   bar in the middle, panels and volume on the right. On phones it shrinks to
+   a mini-player. */
+
+.np-bar {
+  display: grid;
+  grid-area: nowplaying;
+  grid-template-columns: 1fr minmax(420px, 2fr) 1fr;
+  align-items: center;
+  gap: 16px;
+  height: var(--player-height);
+  padding-inline: 18px;
+  border-top: 1px solid var(--line);
+  background: var(--player-fill);
+
+  /* Nothing loaded: the transport is shown, but inert. */
+  &.np-empty .np-center {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+/* ---- Left: what's playing ---- */
+
+.np-left {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.np-placeholder {
+  font-size: 13px;
+}
+
+/* The cover opens the full-screen player. */
+.np-cover-btn {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--round);
+  cursor: pointer;
+  transition: transform 0.15s var(--glide);
+
+  &:hover {
+    transform: scale(1.04);
+  }
+  &:active {
+    transform: scale(0.98);
+  }
+  &:is(:hover, :focus-visible) .np-cover-expand {
+    opacity: 1;
+  }
+}
+
+.np-cover-expand {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.5);
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.15s var(--glide);
+
+  /* An upward chevron: "open up". */
+  & svg {
+    transform: rotate(-90deg);
+  }
+}
+
+/* Title and artist slide in a touch when the track changes. */
+.np-meta {
+  display: grid;
+  min-width: 0;
+  line-height: 1.35;
+  animation: np-meta-in 0.18s var(--glide) both;
+}
+@keyframes np-meta-in {
+  from {
+    opacity: 0;
+    transform: translateX(4px);
+  }
+}
+
+:is(.np-title, .np-artist) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.np-title {
+  font-weight: var(--weight-label);
+}
+.np-artist {
+  font-size: 12px;
+}
+
+.np-star {
+  flex: none;
+}
+
+/* ---- Middle: transport and seek bar ---- */
+
+.np-center {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.np-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.np-play {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding-left: 1px; /* centres the triangle optically */
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  transition:
+    background-color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:hover {
+    background: var(--accent-bright);
+    transform: scale(1.05);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.np-seek {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+}
+
+/* Elapsed on the left (right-aligned), length on the right. */
+.np-time {
+  flex: 0 0 38px;
+  font: 11px var(--type-mono);
+
+  &:first-of-type {
+    text-align: right;
+  }
+}
+
+/* ---- Right: panels and volume ---- */
+
+.np-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+}
+
+.np-volume {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 130px;
+}
+.np-volume-slider {
+  flex: 1;
+}
+
+/* ---- Phones: art and title, then previous / play / next. Seeking, volume
+   and the rest are in the full-screen player (tap the cover). ---- */
+
+@media (max-width: 760px) {
+  .np-bar {
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    height: 60px;
+    padding-inline: 10px;
+  }
+
+  .np-seek,
+  .np-right,
+  .np-star,
+  /* shuffle and repeat, the first and last buttons */
+  .np-controls > .icon-btn:is(:first-child, :last-child) {
+    display: none;
+  }
+}

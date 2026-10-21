@@ -1,0 +1,215 @@
+/* Pieces several pages share: list headers, the album/artist/playlist header,
+   track list column headings, and the big play button. */
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.list-sort {
+  width: auto;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.load-more {
+  display: grid;
+  justify-content: center;
+  padding: 28px 0 8px;
+}
+
+/* ---- Album, artist and playlist header ---- */
+
+.detail-head {
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+  padding: 8px 0 28px;
+}
+
+/* A width, not a flex basis, so pages can size their own (artists use 200px). */
+.detail-art {
+  flex: none;
+  width: 220px;
+
+  & .cover {
+    box-shadow: 0 16px 42px rgb(0 0 0 / 0.36);
+  }
+}
+
+.detail-info {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding-bottom: 6px;
+}
+
+.detail-kind {
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: var(--weight-head);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.detail-title {
+  font-size: 40px;
+  font-weight: var(--weight-head);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.detail-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
+
+  & a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+}
+
+/* "Artist · 2001 · 12 tracks": a dot before every part after the first. */
+.detail-dot::before {
+  margin-right: 8px;
+  content: "·";
+}
+
+.detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 22px;
+}
+
+.play-big {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 50px;
+  padding-inline: 26px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 15px;
+  font-weight: var(--weight-label);
+  transition:
+    background-color 0.15s var(--glide),
+    transform 0.15s var(--glide);
+
+  &:hover {
+    background: var(--accent-bright);
+    transform: scale(1.03);
+  }
+}
+/* The play triangle looks off-centre without a nudge. */
+.play-big-icon {
+  margin-left: 2px;
+}
+
+.bio {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  max-width: 70ch;
+  margin: 4px 0 28px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+
+  /* A long single bio shows its first few lines until opened. */
+  &.clamped > p:first-of-type {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+  }
+  &.clamped > p ~ p {
+    display: none;
+  }
+}
+.bio-intro {
+  color: var(--ink);
+  font-weight: var(--weight-title);
+}
+.bio-entries {
+  display: grid;
+  gap: 8px;
+  padding-left: 1.6em;
+
+  & li::marker {
+    color: var(--ink);
+    font-weight: var(--weight-label);
+  }
+}
+.bio-match {
+  color: var(--ink);
+}
+.bio-toggle {
+  padding: 0;
+  color: var(--ink);
+  font-weight: var(--weight-label);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* ---- Track list headings ---- */
+
+.tracklist {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each heading is as wide as its column in .track-row, so they line up. */
+.tracklist-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  padding: 0 10px 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: var(--weight-label);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+
+  & .tracklist-head-num {
+    width: 26px;
+    text-align: center;
+  }
+  & .tracklist-head-cover {
+    width: 38px;
+  }
+  & .tracklist-head-title {
+    flex: 1;
+  }
+  & .tracklist-head-album {
+    width: 26%;
+  }
+  & .tracklist-head-plays {
+    width: 52px;
+  }
+  & :is(.tracklist-head-star, .tracklist-head-spacer) {
+    width: 32px;
+  }
+  & .tracklist-head-dur {
+    width: 46px;
+    text-align: right;
+  }
+}
+
+.disc-divider {
+  padding: 18px 10px 8px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: var(--weight-label);
+  letter-spacing: 0.04em;
+}
