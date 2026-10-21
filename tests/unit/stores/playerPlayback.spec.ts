@@ -6,6 +6,7 @@ import { nextTick } from "vue";
 import type { Song } from "@/api/types";
 import { saveCredentials } from "@/api/credentials";
 import type { EngineCallbacks } from "@/services/audioEngine";
+import { useHistoryStore } from "@/stores/history";
 import { usePlayerStore } from "@/stores/player";
 import { useSessionStore } from "@/stores/session";
 import { flushPromises } from "@vue/test-utils";
@@ -54,6 +55,7 @@ jest.mock("@/services/audioEngine", () => ({
 
 const song = (id: string) => ({ id, title: id, artist: id, duration: 200, suffix: "mp3" }) as Song;
 const NETWORK_ERROR = 2;
+const DECODE_ERROR = 3;
 
 function signIn(username = "alice") {
   saveCredentials({
@@ -128,6 +130,27 @@ describe("tracks that won't play", () => {
     await flushPromises();
     expect(engine.played).toEqual(["a"]);
     expect(engine.stopped).toBe(1);
+  });
+});
+
+describe("one play, however often its stream reopens", () => {
+  it("records a track retried as MP3 once", async () => {
+    player.playNow([song("a")]);
+    await flushPromises();
+    engine.cb.onError(DECODE_ERROR);
+    await flushPromises();
+    expect(engine.played).toEqual(["a", "a"]);
+    expect(useHistoryStore().entries.filter((e) => e.id === "a")).toHaveLength(1);
+    expect(scrobbles.filter((u) => u.searchParams.get("submission") === "false")).toHaveLength(1);
+  });
+
+  it("records a transcode reopened after a seek once", async () => {
+    player.playNow([song("a")]);
+    await flushPromises();
+    engine.cb.onSeekUnsupported(120);
+    await flushPromises();
+    expect(engine.played).toEqual(["a", "a"]);
+    expect(scrobbles.filter((u) => u.searchParams.get("submission") === "false")).toHaveLength(1);
   });
 });
 

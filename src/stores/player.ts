@@ -85,6 +85,7 @@ export const usePlayerStore = defineStore("player", () => {
 
   // Per-track bookkeeping.
   const track = {
+    recorded: false, // the play is in history and Navidrome has had "now playing"
     scrobbled: false, // the play has been reported
     retriedAsMp3: null as string | null, // id of a track already retried transcoded
     resumeAt: 0, // where to start the restored track on first play
@@ -120,7 +121,8 @@ export const usePlayerStore = defineStore("player", () => {
       // The browser can't decode what the server sent: try once as MP3.
       if (code !== undefined && UNDECODABLE.has(code) && track.retriedAsMp3 !== song.id) {
         track.retriedAsMp3 = song.id;
-        void start(state.index, { at: engine.getCurrentTime(), forceMp3: true });
+        // Still the same play: not a second one in history or the scrobble.
+        void start(state.index, { at: engine.getCurrentTime(), forceMp3: true, samePlay: true });
         return;
       }
       skipFailed();
@@ -176,7 +178,10 @@ export const usePlayerStore = defineStore("player", () => {
     state.index = index;
     state.currentTime = at;
     state.duration = song.duration ?? 0;
-    if (!opts.samePlay) track.scrobbled = false;
+    if (!opts.samePlay) {
+      track.recorded = false;
+      track.scrobbled = false;
+    }
     if (!opts.forceMp3) track.retriedAsMp3 = null;
 
     // The track that's been buffering: hand the engine that exact deck, so it
@@ -221,9 +226,14 @@ export const usePlayerStore = defineStore("player", () => {
     return repeat === "all" ? queue.length - 1 : null;
   }
 
+  // Also runs when the same play reopens its stream (a retry, a seek on a
+  // transcode); it's recorded only the first time.
   function trackStarted(song: Song): void {
-    history.record(song); // local, whatever the scrobble setting says
-    if (settings.playback.scrobble) session.client?.scrobble(song.id, false).catch(() => {});
+    if (!track.recorded) {
+      track.recorded = true;
+      history.record(song); // local, whatever the scrobble setting says
+      if (settings.playback.scrobble) session.client?.scrobble(song.id, false).catch(() => {});
+    }
     bufferNext();
     void keepRadioGoing();
   }
@@ -371,6 +381,7 @@ export const usePlayerStore = defineStore("player", () => {
     state.index = index;
     state.currentTime = 0;
     state.duration = song?.duration ?? 0;
+    track.recorded = false;
     track.scrobbled = false;
     buffered = null; // it's the deck now playing
     if (song) trackStarted(song);
