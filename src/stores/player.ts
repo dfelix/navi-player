@@ -54,6 +54,10 @@ const RESTART_AFTER_S = 3;
 const SAVE_EVERY_MS = 4000;
 // MediaError codes for "can't decode" and "format not supported".
 const UNDECODABLE = new Set([3, 4]);
+// A track that won't play is skipped. This many in a row (or every track in a
+// shorter queue) means the server or the files are the problem, not one
+// track: playback stops instead of cycling through the queue for ever.
+const MAX_FAILED_IN_A_ROW = 5;
 
 export const usePlayerStore = defineStore("player", () => {
   const session = useSessionStore();
@@ -86,6 +90,7 @@ export const usePlayerStore = defineStore("player", () => {
   let buffered: { songId: string; deck: DeckTrack } | null = null;
   let lastSaved = 0;
   let fetchingMore = false;
+  let failedInARow = 0;
   let sleepTimer: ReturnType<typeof setTimeout> | undefined;
 
   const engine = new AudioEngine({
@@ -102,6 +107,7 @@ export const usePlayerStore = defineStore("player", () => {
     onEnded: () => advance({ natural: true }),
     onPlayingChange(playing) {
       state.isPlaying = playing;
+      if (playing) failedInARow = 0;
     },
     onCrossfadeStart: () => moveToNextWithoutLoading(),
     onError(code) {
@@ -113,7 +119,7 @@ export const usePlayerStore = defineStore("player", () => {
         void start(state.index, { at: engine.getCurrentTime(), forceMp3: true });
         return;
       }
-      advance({ natural: true });
+      skipFailed();
     },
     onSeekUnsupported(time) {
       // Reopen the stream at that point; it's the same play, not a new one.
@@ -235,6 +241,7 @@ export const usePlayerStore = defineStore("player", () => {
     }
     state.queue = queue;
     state.index = -1;
+    failedInARow = 0; // a fresh choice gets a fresh run
     void start(index);
     persist();
   }
@@ -335,6 +342,21 @@ export const usePlayerStore = defineStore("player", () => {
     } else {
       stop();
     }
+  }
+
+  // The current track couldn't be played: move on, unless that's been
+  // happening track after track, or it's the one track on repeat.
+  function skipFailed(): void {
+    failedInARow++;
+    if (
+      state.repeat === "one" ||
+      failedInARow >= Math.min(MAX_FAILED_IN_A_ROW, state.queue.length)
+    ) {
+      failedInARow = 0;
+      stop();
+      return;
+    }
+    advance({ natural: true });
   }
 
   // A crossfade already started the next track's audio: catch the state up.
