@@ -94,7 +94,9 @@ export const usePlayerStore = defineStore("player", () => {
   // The next track, already loaded into the engine's spare deck.
   let buffered: { songId: string; deck: DeckTrack } | null = null;
   let lastSaved = 0;
-  let fetchingMore = false;
+  // The radio fetch under way, so a second request waits for it rather than
+  // finding nothing.
+  let fetching: Promise<number> | null = null;
   let failedInARow = 0;
   let sleepTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -447,18 +449,16 @@ export const usePlayerStore = defineStore("player", () => {
     return fresh.length;
   }
 
-  // Run one background fetch at a time; failures add nothing and are tried
-  // again on the next track.
-  async function fetchMore(get: () => Promise<Song[]>): Promise<number> {
-    if (fetchingMore) return 0;
-    fetchingMore = true;
-    try {
-      return append(await get());
-    } catch {
-      return 0;
-    } finally {
-      fetchingMore = false;
-    }
+  // Run one background fetch at a time: asking while one is under way waits
+  // for that one's tracks. Failures add nothing and are tried again on the
+  // next track.
+  function fetchMore(get: () => Promise<Song[]>): Promise<number> {
+    fetching ??= get()
+      .then(append, () => 0)
+      .finally(() => {
+        fetching = null;
+      });
+    return fetching;
   }
 
   // Infinite radio: tracks like the last one the user chose (never like a

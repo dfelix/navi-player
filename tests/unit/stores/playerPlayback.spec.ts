@@ -9,6 +9,7 @@ import type { EngineCallbacks } from "@/services/audioEngine";
 import { useHistoryStore } from "@/stores/history";
 import { usePlayerStore } from "@/stores/player";
 import { useSessionStore } from "@/stores/session";
+import { useSettingsStore } from "@/stores/settings";
 import { flushPromises } from "@vue/test-utils";
 import { mockFetch, subsonicOk } from "../../helpers";
 
@@ -53,6 +54,17 @@ jest.mock("@/services/audioEngine", () => ({
   AudioEngine: jest.fn((cb: EngineCallbacks) => (engine = new FakeEngine(cb))),
 }));
 
+// Infinite radio's batches, released by the test when it chooses.
+let releaseRadio: ((songs: Song[]) => void) | null = null;
+jest.mock("@/lib/radio", () => ({
+  buildRadioBatch: jest.fn(
+    () =>
+      new Promise<Song[]>((resolve) => {
+        releaseRadio = resolve;
+      }),
+  ),
+}));
+
 const song = (id: string) => ({ id, title: id, artist: id, duration: 200, suffix: "mp3" }) as Song;
 const NETWORK_ERROR = 2;
 const DECODE_ERROR = 3;
@@ -82,6 +94,7 @@ beforeEach(async () => {
   });
   signIn();
   player = usePlayerStore();
+  releaseRadio = null;
   await flushPromises();
   // Creating the store resets the engine once; count from here.
   engine.stopped = 0;
@@ -177,5 +190,23 @@ describe("signing in again", () => {
     await nextTick();
     expect(engine.stopped).toBe(1);
     expect(player.state.queue).toEqual([]);
+  });
+});
+
+describe("Infinite radio running out", () => {
+  it("waits for a top-up already under way instead of stopping", async () => {
+    useSettingsStore().playback.autoplay = true;
+    player.playNow([song("a")]);
+    await flushPromises();
+    // The last track started, so a top-up is loading; the track ends first.
+    expect(releaseRadio).not.toBeNull();
+    engine.cb.onEnded();
+    await flushPromises();
+    expect(engine.stopped).toBe(0);
+
+    releaseRadio!([song("r1"), song("r2")]);
+    await flushPromises();
+    expect(player.current?.id).toBe("r1");
+    expect(engine.stopped).toBe(0);
   });
 });
