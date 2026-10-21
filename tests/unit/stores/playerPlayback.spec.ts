@@ -2,6 +2,7 @@
 // streams, retries, signing in again, radio running out. The engine is a fake
 // whose callbacks the tests fire by hand.
 import { createPinia, setActivePinia } from "pinia";
+import { nextTick } from "vue";
 import type { Song } from "@/api/types";
 import { saveCredentials } from "@/api/credentials";
 import type { EngineCallbacks } from "@/services/audioEngine";
@@ -127,5 +128,31 @@ describe("tracks that won't play", () => {
     await flushPromises();
     expect(engine.played).toEqual(["a"]);
     expect(engine.stopped).toBe(1);
+  });
+});
+
+describe("signing in again", () => {
+  it("keeps the queue playing when the same account signs back in", async () => {
+    player.playNow([song("a"), song("b"), song("c")], 1);
+    player.addToQueue([song("d")]);
+    await flushPromises();
+    engine.prepareNext.mockClear();
+
+    signIn(); // the session expired and alice entered her password again
+    await nextTick();
+    expect(engine.stopped).toBe(0);
+    expect(player.state.queue.map((s) => s.id)).toEqual(["a", "b", "c", "d"]);
+    expect(player.current?.id).toBe("b");
+    // The next track is reloaded with the new sign-in.
+    expect(engine.prepareNext).toHaveBeenCalledTimes(1);
+  });
+
+  it("still starts over for a different account", async () => {
+    player.playNow([song("a")]);
+    await flushPromises();
+    signIn("bob");
+    await nextTick();
+    expect(engine.stopped).toBe(1);
+    expect(player.state.queue).toEqual([]);
   });
 });

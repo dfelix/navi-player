@@ -4,6 +4,7 @@
 
 import { defineStore } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
+import type { NavidromeClient } from "@/api/client";
 import type { Song } from "@/api/types";
 import { buildArtistRadioBatch, type ArtistStation } from "@/lib/artistRadio";
 import { canPlayContainer } from "@/lib/codecs";
@@ -40,6 +41,9 @@ export interface PlayerState {
 }
 
 const REPEAT_ORDER: RepeatMode[] = ["off", "all", "one"];
+
+const sameAccount = (a: NavidromeClient, b: NavidromeClient) =>
+  a.serverUrl === b.serverUrl && a.username === b.username;
 
 // Infinite radio adds a few tracks once the last one starts, so a short queue
 // you built isn't buried in suggestions before you've heard it; a bigger batch
@@ -588,10 +592,17 @@ export const usePlayerStore = defineStore("player", () => {
   }
 
   // Signing in, out, or as someone else: drop what was playing and load that
-  // account's own queue.
+  // account's own queue. The same account signing in again (after its session
+  // expired) keeps playing; only the next track is reloaded, as its stream
+  // address carries the old sign-in.
   watch(
     () => session.client,
-    () => {
+    (client, previous) => {
+      if (client && previous && sameAccount(client, previous)) {
+        buffered = null;
+        bufferNext();
+        return;
+      }
       engine.stop();
       buffered = null;
       track.resumeAt = 0;
