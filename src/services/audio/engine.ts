@@ -37,8 +37,13 @@ export class AudioEngine {
   private volume = 0.8;
   private muted = false;
   private crossfadeMs = 0;
-  // Set while a crossfade is under way: when it began.
+  // Set while a crossfade is under way: when it began, and the timer that
+  // stops the outgoing deck once it's silent.
   private fadeStartedAt: number | null = null;
+  private fadeTimer: ReturnType<typeof setTimeout> | null = null;
+  // The next track asked for mid-fade, while the spare deck is still the
+  // outgoing one: it loads once the fade is over (null: nothing is next).
+  private nextAfterFade: DeckTrack | null | undefined;
   private frame = 0;
   private readonly eq = new Equalizer();
 
@@ -129,6 +134,12 @@ export class AudioEngine {
 
   // Buffer the track expected to play next (null: nothing is).
   prepareNext(track: DeckTrack | null): void {
+    if (this.fading) {
+      // The spare deck is still sounding the fade's tail; loading it now
+      // would cut the fade off.
+      this.nextAfterFade = track;
+      return;
+    }
     if (!track) {
       this.spare.url = null;
       return;
@@ -137,7 +148,7 @@ export class AudioEngine {
   }
 
   async play(track: DeckTrack): Promise<void> {
-    this.fadeStartedAt = null;
+    this.cancelFade();
     this.eq.wake();
 
     if (this.spare.url === track.url) {
@@ -174,7 +185,7 @@ export class AudioEngine {
   }
 
   stop(): void {
-    this.fadeStartedAt = null;
+    this.cancelFade();
     this.decks.forEach((deck) => deck.unload());
     this.cb.onPlayingChange(false);
     this.stopTicking();
@@ -276,13 +287,27 @@ export class AudioEngine {
 
     this.fadeStartedAt = now;
     this.current = 1 - this.current;
+    this.fadeTimer = setTimeout(() => this.finishFade(outgoing), this.crossfadeMs + FADE_TAIL_MS);
     this.cb.onCrossfadeStart();
+  }
 
-    setTimeout(() => {
-      outgoing.el.pause();
-      outgoing.url = null;
-      this.fadeStartedAt = null;
-      this.applyLevel(this.live);
-    }, this.crossfadeMs + FADE_TAIL_MS);
+  private finishFade(outgoing: Deck): void {
+    this.fadeTimer = null;
+    this.fadeStartedAt = null;
+    outgoing.el.pause();
+    outgoing.url = null;
+    this.applyLevel(this.live);
+    const next = this.nextAfterFade;
+    this.nextAfterFade = undefined;
+    if (next !== undefined) this.prepareNext(next);
+  }
+
+  // A play or stop mid-fade takes over: the fade's timer must not later stop
+  // a deck that's been given something else to do.
+  private cancelFade(): void {
+    if (this.fadeTimer) clearTimeout(this.fadeTimer);
+    this.fadeTimer = null;
+    this.fadeStartedAt = null;
+    this.nextAfterFade = undefined;
   }
 }

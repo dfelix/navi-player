@@ -143,6 +143,55 @@ describe("AudioEngine", () => {
     expect(engine.hasActiveTrack()).toBe(true);
   });
 
+  it("buffers the track after next only once the fade is over, so every change fades", async () => {
+    const { engine, cb, els } = setup();
+    engine.setCrossfade(4);
+    engine.setVolume(1);
+    await engine.play(track("a"));
+    engine.prepareNext(track("b"));
+    els[0]!.duration = 200;
+    els[0]!.currentTime = 197;
+    engine.onTick(0);
+    expect(cb.onCrossfadeStart).toHaveBeenCalledTimes(1);
+
+    // The player asks for the next track as soon as the fade begins.
+    engine.prepareNext(track("c"));
+    expect(els[0]!.src).toBe("a");
+    expect(els[0]!.paused).toBe(false);
+
+    jest.advanceTimersByTime(4100);
+    expect(els[0]!.src).toBe("c");
+
+    // And b → c crossfades too.
+    els[1]!.duration = 200;
+    els[1]!.currentTime = 197;
+    engine.onTick(10_000);
+    expect(cb.onCrossfadeStart).toHaveBeenCalledTimes(2);
+    expect(els[0]!.paused).toBe(false);
+  });
+
+  it("keeps a track picked mid-fade playing when the fade's timer runs out", async () => {
+    const { engine, cb, els } = setup();
+    engine.setCrossfade(4);
+    engine.setVolume(1);
+    await engine.play(track("a"));
+    engine.prepareNext(track("b"));
+    els[0]!.duration = 200;
+    els[0]!.currentTime = 197;
+    engine.onTick(0);
+
+    // Previous, a second into the fade: back to a, on the deck that was fading out.
+    await engine.play(track("a"));
+    expect(els[0]!.paused).toBe(false);
+    expect(els[1]!.paused).toBe(true);
+
+    jest.advanceTimersByTime(4100);
+    expect(els[0]!.paused).toBe(false);
+    expect(els[0]!.volume).toBe(1);
+    expect(engine.hasActiveTrack()).toBe(true);
+    expect(cb.onPlayingChange).toHaveBeenLastCalledWith(true);
+  });
+
   it("doesn't crossfade without a next track, or with crossfade off", async () => {
     const { engine, cb, els } = setup();
     engine.setCrossfade(4);
