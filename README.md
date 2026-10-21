@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="branding/logo.svg" alt="NaviPlayer logo" width="128" height="128">
+</p>
+
 # NaviPlayer
 
 A dark, album-art-first web player for your
@@ -32,8 +36,8 @@ and Navidrome's permissions apply. NaviPlayer is only the player.
 - A full-screen player with colours taken from the album art
 - Synced lyrics, from your server or, if you turn it on, from
   [LRCLIB](https://lrclib.net)
-- **Artist radio:** a never-ending "Arctic Monkeys Radio"-style station that
-  mixes the artist's best-known songs with songs by similar artists
+- **Artist radio:** a never-ending station for one artist that mixes their
+  best-known songs with songs by similar artists
 - **Infinite radio:** when the queue runs out, it carries on with similar tracks
 - **Surprise Me:** one random song and a queue of tracks that go with it
 - Media keys and lock-screen controls, sleep timer, listening history
@@ -190,8 +194,8 @@ listener.
 ### Artist radio
 
 Press **Radio** on an artist's page, or choose **Artist radio** or **Go to
-artist radio** from an artist's or track's menu. You get a station, e.g.
-"Arctic Monkeys Radio":
+artist radio** from an artist's or track's menu. You get a station named
+after the artist:
 
 - It opens with one of the artist's songs. About one in three songs after
   that is theirs; the rest are by similar artists, spread out so the same
