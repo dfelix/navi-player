@@ -64,6 +64,15 @@ async function serve(c: Context): Promise<Response> {
 
   const { pathname } = new URL(c.req.url);
   const path = await fileFor(pathname);
+  // A missing build file is a 404, not the page shell: a tab still running an
+  // older build then fails cleanly when it loads a chunk that's gone, and no
+  // cache keeps HTML under an asset's name.
+  if (!path && pathname.startsWith("/assets/")) {
+    return new Response("Not found", {
+      status: 404,
+      headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": NEVER_CACHE },
+    });
+  }
   if (!path) return html(await pageShell());
 
   // Pages and the manifest carry the display name.

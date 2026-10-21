@@ -182,6 +182,13 @@ describe("bundled server", () => {
     expect((await fetch(`${base}/`)).headers.get("cache-control")).toContain("no-store");
   });
 
+  it("answers 404 for a build file that doesn't exist, not the page shell", async () => {
+    const res = await fetch(`${base}/assets/SettingsView-oldhash.js`);
+    expect(res.status).toBe(404);
+    expect(res.headers.get("content-type")).not.toContain("text/html");
+    expect(res.headers.get("cache-control")).toContain("no-store");
+  });
+
   it("relays LRCLIB lookups on its own origin, refusing ones the app wouldn't make", async () => {
     // Only requests the relay rejects itself: nothing here reaches lrclib.net.
     const bad = await fetch(`${base}/lyrics/lrclib/get?track_name=only-a-title`);
