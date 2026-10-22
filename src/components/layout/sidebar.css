@@ -119,11 +119,18 @@
   }
 }
 
+/* One column no wider than the sidebar: a long name ellipsizes instead of
+   widening every row and pushing the globes out of sight. The list reaches into
+   the sidebar's right padding, so its scrollbar sits there, not over the rows. */
 .sidebar-playlist-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 1px;
+  margin-right: -12px;
+  padding-right: 12px;
   overflow-y: auto;
+  scrollbar-width: thin;
 }
 .sidebar-playlist {
   padding: 8px 11px;

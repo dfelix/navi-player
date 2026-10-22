@@ -50,7 +50,7 @@ const actions = computed<ActionItem[]>(() => [
         </button>
       </div>
       <div class="card-meta">
-        <span class="card-title">{{ playlist.name }}</span>
+        <span class="card-title" :title="playlist.name">{{ playlist.name }}</span>
         <span v-if="sub" class="card-sub muted">{{ sub }}</span>
       </div>
     </RouterLink>

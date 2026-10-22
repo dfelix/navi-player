@@ -171,7 +171,7 @@ function openSettings(): void {
             @drop="onDrop($event, pl.id, pl.name)"
           >
             <AppIcon name="list" :size="17" />
-            <span class="sidebar-playlist-name">{{ pl.name }}</span>
+            <span class="sidebar-playlist-name" :title="pl.name">{{ pl.name }}</span>
             <AppIcon v-if="pl.public" name="globe" :size="13" class="sidebar-playlist-public" />
           </RouterLink>
           <p v-if="playlists && myPlaylists.length === 0" class="sidebar-empty muted">

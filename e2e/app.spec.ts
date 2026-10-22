@@ -191,6 +191,11 @@ test.describe("NaviPlayer", () => {
   test("signs in, uses the configured server and keeps the session", async ({ page, baseURL }) => {
     await signIn(page);
     await expect(page.locator(".sidebar")).toContainText("Road trip");
+    // A name too long for the sidebar can be read in full on hover.
+    await expect(page.locator(".sidebar-playlist-name", { hasText: "Road trip" })).toHaveAttribute(
+      "title",
+      "Road trip",
+    );
     // The sidebar keeps to your own playlists.
     await expect(page.locator(".sidebar")).not.toContainText("Kitchen songs");
     // Home lists other people's public playlists: not private ones, not yours.
