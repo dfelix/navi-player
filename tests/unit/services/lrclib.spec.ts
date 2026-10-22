@@ -9,9 +9,9 @@ import { json, mockFetch } from "../../helpers";
 const SYNCED = "[00:00.67] First line\n[00:04.52] Second line\n[01:05.10] After a minute";
 const track = (extra: Record<string, unknown> = {}) => ({
   id: 1,
-  trackName: "A Kind of Magic",
-  artistName: "Queen",
-  albumName: "A Kind of Magic",
+  trackName: "Slow Burning Light",
+  artistName: "Velvet Orchid",
+  albumName: "Slow Burning Light",
   duration: 262,
   syncedLyrics: SYNCED,
   plainLyrics: "First line\nSecond line",
@@ -20,9 +20,9 @@ const track = (extra: Record<string, unknown> = {}) => ({
 const song = (extra: Partial<Song> = {}) =>
   ({
     id: "1",
-    title: "A Kind of Magic",
-    artist: "Queen",
-    album: "A Kind of Magic",
+    title: "Slow Burning Light",
+    artist: "Velvet Orchid",
+    album: "Slow Burning Light",
     duration: 262,
     ...extra,
   }) as Song;
@@ -35,7 +35,7 @@ beforeEach(() => setActivePinia(createPinia()));
 describe("parseLrc", () => {
   const lines = parseLrc(
     [
-      "[ar: Queen]",
+      "[ar: Velvet Orchid]",
       "[00:00.67] First line",
       "[01:05.10] After a minute",
       "[02:03.456] Precise",
@@ -91,7 +91,7 @@ describe("fetchLyricsFromLrclib", () => {
     );
     const out = await fetchLyricsFromLrclib(song({ album: "Some Compilation", duration: 264 }));
     expect(out?.synced).toBe(true);
-    expect(out?.displayTitle).toBe("A Kind of Magic");
+    expect(out?.displayTitle).toBe("Slow Burning Light");
   });
 
   it("rejects a search result whose length doesn't match", async () => {
@@ -165,7 +165,9 @@ describe("logging", () => {
     mockFetch((url) => (url.pathname === "/lyrics/lrclib/get" ? json(track()) : json([])));
     await fetchLyricsFromLrclib(song());
     expect(lines).toEqual([
-      expect.stringMatching(/^log \[lrclib\] "Queen — A Kind of Magic": synced lyrics \(\d+ ms\)$/),
+      expect.stringMatching(
+        /^log \[lrclib\] "Velvet Orchid — Slow Burning Light": synced lyrics \(\d+ ms\)$/,
+      ),
     ]);
   });
 
@@ -174,7 +176,7 @@ describe("logging", () => {
     mockFetch((url) => (url.pathname === "/lyrics/lrclib/get" ? notFound() : json([track()])));
     await fetchLyricsFromLrclib(song({ duration: 30 }));
     const text = lines.join("\n");
-    expect(text).toContain("GET /lyrics/lrclib/get?artist_name=Queen");
+    expect(text).toContain("GET /lyrics/lrclib/get?artist_name=Velvet+Orchid");
     expect(text).toMatch(/\/get → 404 not found/);
     expect(text).toMatch(/\/search → 200/);
     expect(text).toContain("none within ±5s of 30s");
@@ -195,7 +197,7 @@ describe("logging", () => {
     mockFetch(() => json({ error: "rate-limited", retryAfter: 1 }, 429));
     await fetchLyricsFromLrclib(song()).catch(() => {});
     expect(lines.at(-1)).toMatch(
-      /^log \[lrclib\] "Queen — A Kind of Magic": not looked up — rate limited by LRCLIB/,
+      /^log \[lrclib\] "Velvet Orchid — Slow Burning Light": not looked up — rate limited by LRCLIB/,
     );
   });
 

@@ -42,9 +42,9 @@ const ok = (body: unknown = { id: 1 }) =>
 const status = (code: number, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify({ code }), { status: code, headers });
 const Q = {
-  artist_name: "Queen",
-  track_name: "A Kind of Magic",
-  album_name: "AKOM",
+  artist_name: "Velvet Orchid",
+  track_name: "Slow Burning Light",
+  album_name: "SBL",
   duration: "262",
 };
 
@@ -56,7 +56,7 @@ describe("LRCLIB relay", () => {
     expect(JSON.parse(res.body)).toEqual({ id: 1 });
     expect(res.headers["content-type"]).toBe("application/json");
     expect(calls[0]?.url.origin + calls[0]?.url.pathname).toBe("https://lrclib.net/api/get");
-    expect(calls[0]?.url.searchParams.get("track_name")).toBe("A Kind of Magic");
+    expect(calls[0]?.url.searchParams.get("track_name")).toBe("Slow Burning Light");
     expect(calls[0]?.headers["user-agent"]).toBe("navi-player/9.9.9");
   });
 
@@ -126,9 +126,9 @@ describe("LRCLIB relay", () => {
     // Same lookup, parameters in another order.
     await ask("get", {
       duration: "262",
-      track_name: "A Kind of Magic",
-      album_name: "AKOM",
-      artist_name: "Queen",
+      track_name: "Slow Burning Light",
+      album_name: "SBL",
+      artist_name: "Velvet Orchid",
     });
     expect(calls).toHaveLength(1);
     advance(60 * 60_000 + 1);

@@ -1,7 +1,7 @@
 import { bioToText, parseBio } from "@/lib/artistBio";
 
-const PLUTO =
-  'There are multiple artists named Pluto: 1) Pluto, also known as BIG PLUTO, is a rapper from Atlanta making noise with &quot;Whim Whamiee&quot;. 2) Pluto is a Portuguese rock band formed in 2002 after Ornatos Violeta ended. Their debut album, Bom Dia, reached 6th place. 3) Pluto was Rolo McGinty&#39;s club project; the album Rising came out in 1996. 4) Pluto Shervington (born 1950) is a reggae musician. <a href="https://www.last.fm/music/Pluto">Read more on Last.fm</a>';
+const LUMEN =
+  'There are multiple artists named Lumen: 1) Lumen, also known as BIG LUMEN, is a rapper from Atlanta making noise with &quot;Neon Rain&quot;. 2) Lumen is a Portuguese rock band formed in 2002 after The Quiet Hours ended. Their debut album, Bom Dia, reached 6th place. 3) Lumen was Ray Dunmore&#39;s club project; the album Rising came out in 1996. 4) Lumen Hartley (born 1950) is a reggae musician. <a href="https://www.last.fm/music/Lumen">Read more on Last.fm</a>';
 
 describe("bioToText", () => {
   it("drops links and tags, decodes entities and keeps paragraphs", () => {
@@ -24,36 +24,36 @@ describe("parseBio", () => {
   });
 
   it("splits a disambiguation text into its entries", () => {
-    const bio = parseBio(PLUTO);
+    const bio = parseBio(LUMEN);
     expect(bio).toMatchObject({
       kind: "several",
-      intro: "There are multiple artists named Pluto:",
+      intro: "There are multiple artists named Lumen:",
     });
     if (bio?.kind !== "several") throw new Error("expected several");
     expect(bio.entries).toHaveLength(4);
     expect(bio.entries[0]).toBe(
-      'Pluto, also known as BIG PLUTO, is a rapper from Atlanta making noise with "Whim Whamiee".',
+      'Lumen, also known as BIG LUMEN, is a rapper from Atlanta making noise with "Neon Rain".',
     );
     // "(born 1950) " is not mistaken for an entry marker.
-    expect(bio.entries[3]).toBe("Pluto Shervington (born 1950) is a reggae musician.");
+    expect(bio.entries[3]).toBe("Lumen Hartley (born 1950) is a reggae musician.");
     expect(bio.match).toBeNull();
   });
 
   it("picks the entry that names one of the library's albums", () => {
-    expect(parseBio(PLUTO, ["Bom Dia", "Bom Dia (Live)"])).toMatchObject({ match: 1 });
+    expect(parseBio(LUMEN, ["Bom Dia", "Bom Dia (Live)"])).toMatchObject({ match: 1 });
     // Case doesn't matter.
-    expect(parseBio(PLUTO, ["RISING"])).toMatchObject({ match: 2 });
+    expect(parseBio(LUMEN, ["RISING"])).toMatchObject({ match: 2 });
   });
 
   it("doesn't pick when nothing, or more than one entry, matches", () => {
-    expect(parseBio(PLUTO, ["Nothing Here"])).toMatchObject({ match: null });
-    expect(parseBio(PLUTO, ["Pluto"])).toMatchObject({ match: null }); // every entry
-    expect(parseBio(PLUTO, ["Ri"])).toMatchObject({ match: null }); // too short to count
+    expect(parseBio(LUMEN, ["Nothing Here"])).toMatchObject({ match: null });
+    expect(parseBio(LUMEN, ["Lumen"])).toMatchObject({ match: null }); // every entry
+    expect(parseBio(LUMEN, ["Ri"])).toMatchObject({ match: null }); // too short to count
   });
 
   it("only matches whole words", () => {
-    expect(parseBio(PLUTO, ["Bom Di"])).toMatchObject({ match: null });
-    expect(parseBio(PLUTO, ["Dia"])).toMatchObject({ match: 1 });
+    expect(parseBio(LUMEN, ["Bom Di"])).toMatchObject({ match: null });
+    expect(parseBio(LUMEN, ["Dia"])).toMatchObject({ match: 1 });
   });
 
   it("splits entries on line breaks too", () => {

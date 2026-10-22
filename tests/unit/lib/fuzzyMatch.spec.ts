@@ -9,10 +9,10 @@ beforeEach(() => setActivePinia(createPinia()));
 
 describe("matchScore", () => {
   it("ranks exact, then prefix, then word-start, then contained matches", () => {
-    const exact = matchScore("radiohead", "Radiohead");
-    const prefix = matchScore("radio", "Radiohead");
-    const wordStart = matchScore("kid", "Radiohead Kid A");
-    const inside = matchScore("diohe", "Radiohead");
+    const exact = matchScore("lighthouse", "Lighthouse");
+    const prefix = matchScore("light", "Lighthouse");
+    const wordStart = matchScore("pale", "Lighthouse Pale Sky");
+    const inside = matchScore("ghtho", "Lighthouse");
     expect(exact).toBe(1);
     expect(prefix).toBeLessThan(exact);
     expect(wordStart).toBeLessThan(prefix);
@@ -21,33 +21,33 @@ describe("matchScore", () => {
   });
 
   it("ignores case, accents and punctuation", () => {
-    expect(matchScore("sigur ros", "Sigur Rós")).toBe(1);
-    expect(matchScore("acdc", "AC/DC")).toBeGreaterThan(0);
-    expect(simplify("  Beyoncé — Halo! ")).toBe("beyonce halo");
+    expect(matchScore("cafe ebene", "Café Ébène")).toBe(1);
+    expect(matchScore("exit", "EX/IT")).toBeGreaterThan(0);
+    expect(simplify("  Renée — Écho! ")).toBe("renee echo");
   });
 
   it("forgives a typo in a longer word", () => {
-    expect(matchScore("radoihead", "Radiohead")).toBeGreaterThan(0.5);
-    expect(matchScore("metalica", "Metallica")).toBeGreaterThan(0.5);
-    expect(matchScore("arctic monkies", "Arctic Monkeys")).toBeGreaterThan(0.5);
+    expect(matchScore("ligthhouse", "Lighthouse")).toBeGreaterThan(0.5);
+    expect(matchScore("petalina", "Petallina")).toBeGreaterThan(0.5);
+    expect(matchScore("northern statik", "Northern Static")).toBeGreaterThan(0.5);
   });
 
   it("is strict with short words, and says 0 for no match", () => {
     expect(matchScore("abc", "abd")).toBe(0);
-    expect(matchScore("queen", "Pink Floyd")).toBe(0);
+    expect(matchScore("velvet", "Slate Harbour")).toBe(0);
     expect(matchScore("", "anything")).toBe(0);
   });
 });
 
 describe("searchVariants", () => {
   it("adds each word and the start of the longest one", () => {
-    expect(searchVariants("arctic monkies")).toEqual([
-      "arctic monkies",
-      "arctic",
-      "monkies",
-      "mon",
+    expect(searchVariants("northern statik")).toEqual([
+      "northern statik",
+      "northern",
+      "statik",
+      "nor",
     ]);
-    expect(searchVariants("radoihead")).toEqual(["radoihead", "rad"]);
+    expect(searchVariants("ligthhouse")).toEqual(["ligthhouse", "lig"]);
     expect(searchVariants("  ")).toEqual([]);
   });
 });
@@ -55,13 +55,13 @@ describe("searchVariants", () => {
 describe("searchLibrary", () => {
   it("merges the looser searches and ranks by what was typed", async () => {
     const results: Record<string, SearchResult> = {
-      metalica: { artist: [], album: [], song: [] },
-      met: {
-        artist: [{ id: "m", name: "Metallica" }],
-        album: [{ id: "a1", name: "Master of Puppets", artist: "Metallica" }],
+      petalina: { artist: [], album: [], song: [] },
+      pet: {
+        artist: [{ id: "p", name: "Petallina" }],
+        album: [{ id: "a1", name: "Paper Gardens", artist: "Petallina" }],
         song: [
-          { id: "s1", title: "One", artist: "Metallica" },
-          { id: "s2", title: "Metropolis", artist: "Someone" },
+          { id: "s1", title: "Embers", artist: "Petallina" },
+          { id: "s2", title: "Petrichor", artist: "Someone" },
         ],
       },
     };
@@ -69,10 +69,10 @@ describe("searchLibrary", () => {
       search: jest.fn(async (q: string) => results[q] ?? { artist: [], album: [], song: [] }),
     } as unknown as NavidromeClient;
 
-    const out = await searchLibrary(client, "metalica", [{ id: "x", name: "Metric" }]);
-    expect(out.artist.map((a) => a.name)).toEqual(["Metallica"]);
-    expect(out.album.map((a) => a.name)).toEqual(["Master of Puppets"]);
-    expect(out.song.map((s) => s.title)).toEqual(["One"]);
+    const out = await searchLibrary(client, "petalina", [{ id: "x", name: "Petrol" }]);
+    expect(out.artist.map((a) => a.name)).toEqual(["Petallina"]);
+    expect(out.album.map((a) => a.name)).toEqual(["Paper Gardens"]);
+    expect(out.song.map((s) => s.title)).toEqual(["Embers"]);
   });
 
   it("still finds artists from the local list when the server finds nothing", async () => {
@@ -81,10 +81,10 @@ describe("searchLibrary", () => {
         throw new Error("down");
       }),
     } as unknown as NavidromeClient;
-    const out = await searchLibrary(client, "radoihead", [
-      { id: "r", name: "Radiohead" },
-      { id: "q", name: "Queen" },
+    const out = await searchLibrary(client, "ligthhouse", [
+      { id: "l", name: "Lighthouse" },
+      { id: "v", name: "Velvet Orchid" },
     ]);
-    expect(out.artist.map((a) => a.name)).toEqual(["Radiohead"]);
+    expect(out.artist.map((a) => a.name)).toEqual(["Lighthouse"]);
   });
 });

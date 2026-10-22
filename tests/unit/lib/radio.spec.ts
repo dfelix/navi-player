@@ -5,7 +5,7 @@ import type { Song } from "@/api/types";
 import { buildRadioBatch, gatherRadioCandidates } from "@/lib/radio";
 
 const s = (id: string, extra: Partial<Song> = {}) => ({ id, title: id, ...extra }) as Song;
-const seed = s("seed", { artist: "Radiohead", artistId: "rh", genre: "Rock; Alternative; Indie" });
+const seed = s("seed", { artist: "Lighthouse", artistId: "lh", genre: "Rock; Alternative; Indie" });
 
 function client(over: Record<string, jest.Mock> = {}) {
   const mocks = {
@@ -31,7 +31,7 @@ describe("gatherRadioCandidates", () => {
       "Alternative",
     ]);
     expect(c.mocks.getTopSongs.mock.calls.map((call) => call[0])).toEqual([
-      "Radiohead",
+      "Lighthouse",
       "A",
       "B",
       "C",

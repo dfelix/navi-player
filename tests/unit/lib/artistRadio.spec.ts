@@ -10,7 +10,7 @@ import {
 } from "@/lib/artistRadio";
 import { useSettingsStore } from "@/stores/settings";
 
-const STATION: ArtistStation = { kind: "artist", id: "am", name: "Arctic Monkeys" };
+const STATION: ArtistStation = { kind: "artist", id: "ns", name: "Northern Static" };
 
 const song = (id: string, artist: string, extra: Partial<Song> = {}) =>
   ({
@@ -32,7 +32,7 @@ beforeEach(() => setActivePinia(createPinia()));
 describe("mixArtistRadio", () => {
   const pool: ArtistRadioPool = {
     own: own(10),
-    others: [...by("Strokes", 6), ...by("Kooks", 6), ...by("Libertines", 6)],
+    others: [...by("Halfmoons", 6), ...by("Coastliners", 6), ...by("Driftwood", 6)],
     sources: {},
   };
 
@@ -66,7 +66,7 @@ describe("mixArtistRadio", () => {
   it("spreads the other artists instead of playing one out", () => {
     const batch = mixArtistRadio(pool, 9, { random: NO_RANDOM });
     const others = batch.filter((s) => s.artist !== STATION.name).map((s) => s.artist);
-    expect(new Set(others)).toEqual(new Set(["Strokes", "Kooks", "Libertines"]));
+    expect(new Set(others)).toEqual(new Set(["Halfmoons", "Coastliners", "Driftwood"]));
   });
 
   it("continues the pattern on a top-up rather than restarting with the artist", () => {
@@ -75,19 +75,19 @@ describe("mixArtistRadio", () => {
   });
 
   it("skips what's queued and saves what you just heard for last", () => {
-    const queued = new Set(["own0", "Strokes0"]);
+    const queued = new Set(["own0", "Halfmoons0"]);
     const recent = new Set(["own1"]);
     const batch = mixArtistRadio(pool, 40, { random: NO_RANDOM, queued, recent });
     const ids = batch.map((s) => s.id);
     expect(ids).not.toContain("own0");
-    expect(ids).not.toContain("Strokes0");
+    expect(ids).not.toContain("Halfmoons0");
     const ownIds = batch.filter((s) => s.artist === STATION.name).map((s) => s.id);
     expect(ownIds.at(-1)).toBe("own1");
   });
 
   it("keeps going with whatever is left when one side runs out", () => {
     expect(mixArtistRadio({ own: own(2), others: [], sources: {} }, 5)).toHaveLength(2);
-    const onlyOthers = mixArtistRadio({ own: [], others: by("Strokes", 3), sources: {} }, 5);
+    const onlyOthers = mixArtistRadio({ own: [], others: by("Halfmoons", 3), sources: {} }, 5);
     expect(onlyOthers).toHaveLength(3);
   });
 
@@ -97,8 +97,8 @@ describe("mixArtistRadio", () => {
       ...pool,
       own: own(3).map((s) => ({ ...s, playCount: 50 })),
       others: [
-        song("fresh", "Strokes", { playCount: 0 }),
-        song("worn", "Kooks", { playCount: 50 }),
+        song("fresh", "Halfmoons", { playCount: 0 }),
+        song("worn", "Coastliners", { playCount: 50 }),
       ],
     };
     const ids = mixArtistRadio(worn, 10, { random: NO_RANDOM }).map((s) => s.id);
@@ -116,8 +116,8 @@ describe("gatherArtistRadio", () => {
       getSimilarSongs: jest.fn(async () => [...by("Mix", 3), song("selfmix", STATION.name)]),
       getArtistInfo: jest.fn(async () => ({
         similarArtist: [
-          { id: "s", name: "Strokes" },
-          { id: "k", name: "Kooks" },
+          { id: "h", name: "Halfmoons" },
+          { id: "c", name: "Coastliners" },
         ],
       })),
       getArtist: jest.fn(async () => ({
@@ -140,10 +140,10 @@ describe("gatherArtistRadio", () => {
     const pool = await gatherArtistRadio(c, STATION);
     expect(pool.own).toHaveLength(15);
     expect(pool.others.slice(0, 4).map((s) => s.artist)).toEqual([
-      "Strokes",
-      "Kooks",
-      "Strokes",
-      "Kooks",
+      "Halfmoons",
+      "Coastliners",
+      "Halfmoons",
+      "Coastliners",
     ]);
     // The artist's own songs never count as "similar".
     expect(pool.others.some((s) => s.artist === STATION.name)).toBe(false);

@@ -35,8 +35,8 @@ describe("pickRadioSeed", () => {
 
 describe("scoring and ranking", () => {
   const seed = track("seed", {
-    artist: "Pixies",
-    albumId: "doolittle",
+    artist: "Moth Choir",
+    albumId: "lanterns",
     genre: "Indie Rock",
     year: 1989,
   });
@@ -51,12 +51,12 @@ describe("scoring and ranking", () => {
 
   it("prefers another band in the genre to more of the same album", () => {
     const sameAlbum = track("same", {
-      artist: "Pixies",
-      albumId: "doolittle",
+      artist: "Moth Choir",
+      albumId: "lanterns",
       genre: "Indie Rock",
       year: 1989,
     });
-    const otherBand = track("other", { artist: "Breeders", genre: "Indie Rock", year: 1990 });
+    const otherBand = track("other", { artist: "Paper Cranes", genre: "Indie Rock", year: 1990 });
     expect(scoreCandidate(seed, otherBand, steady)).toBeGreaterThan(
       scoreCandidate(seed, sameAlbum, steady),
     );

@@ -94,8 +94,8 @@ describe("stats cards", () => {
 
 describe("cover palette", () => {
   it("slugs artist names for /listen URLs", () => {
-    expect(slugify("Sigur Rós")).toBe("sigur-ros");
-    expect(slugify("  AC/DC ")).toBe("ac-dc");
+    expect(slugify("Café Ébène")).toBe("cafe-ebene");
+    expect(slugify("  EX/IT ")).toBe("ex-it");
     expect(slugify("")).toBe("unknown");
   });
 

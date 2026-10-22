@@ -132,10 +132,10 @@ describe("player store", () => {
   });
 });
 
-// A library where Arctic Monkeys have plenty of songs and Last.fm knows four
+// A library where Northern Static have plenty of songs and Last.fm knows four
 // similar artists.
 function artistRadioServer() {
-  const SIMILAR = ["Strokes", "Kooks", "Libertines", "Blossoms"];
+  const SIMILAR = ["Halfmoons", "Coastliners", "Driftwood", "Saltmarsh"];
   const many = (artist: string, n: number, artistId?: string) =>
     Array.from({ length: n }, (_, i) => ({ ...song(`${artist}-${i}`, artist), artistId }));
   return mockFetch((url) => {
@@ -143,7 +143,7 @@ function artistRadioServer() {
     const p = url.searchParams;
     if (endpoint === "getTopSongs.view") {
       const artist = p.get("artist")!;
-      const list = artist === "Arctic Monkeys" ? many(artist, 40, "am") : many(artist, 10);
+      const list = artist === "Northern Static" ? many(artist, 40, "ns") : many(artist, 10);
       return subsonicOk({ topSongs: { song: list } });
     }
     if (endpoint === "getArtistInfo2.view") {
@@ -160,7 +160,7 @@ function artistRadioServer() {
 
 describe("artist radio", () => {
   let player: ReturnType<typeof usePlayerStore>;
-  const AM = { id: "am", name: "Arctic Monkeys" };
+  const ARTIST = { id: "ns", name: "Northern Static" };
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -171,18 +171,18 @@ describe("artist radio", () => {
   });
 
   it("starts a station that opens with the artist and mixes in similar artists", async () => {
-    expect(await player.startArtistRadio(AM)).toBe(true);
-    expect(player.station).toEqual({ kind: "artist", ...AM });
+    expect(await player.startArtistRadio(ARTIST)).toBe(true);
+    expect(player.station).toEqual({ kind: "artist", ...ARTIST });
     expect(player.state.queue).toHaveLength(25);
-    expect(player.current?.artist).toBe("Arctic Monkeys");
-    const own = player.state.queue.filter((s) => s.artist === "Arctic Monkeys").length;
+    expect(player.current?.artist).toBe("Northern Static");
+    const own = player.state.queue.filter((s) => s.artist === "Northern Static").length;
     expect(own).toBeGreaterThanOrEqual(8);
     expect(own).toBeLessThanOrEqual(10);
   });
 
   it("keeps the station topped up, even with Infinite radio off", async () => {
     useSettingsStore().playback.autoplay = false;
-    await player.startArtistRadio(AM);
+    await player.startArtistRadio(ARTIST);
     for (let i = 0; i < 20; i++) player.next();
     await flushPromises();
     expect(player.state.queue.length).toBeGreaterThan(25);
@@ -190,28 +190,28 @@ describe("artist radio", () => {
   });
 
   it("stays on the station when jumping within its queue, and ends it otherwise", async () => {
-    await player.startArtistRadio(AM);
+    await player.startArtistRadio(ARTIST);
     player.playNow(player.state.queue, 3);
-    expect(player.station?.name).toBe("Arctic Monkeys");
+    expect(player.station?.name).toBe("Northern Static");
     player.playNow([song("x")], 0);
     expect(player.station).toBeNull();
   });
 
   it("can be stopped without losing the queue", async () => {
-    await player.startArtistRadio(AM);
+    await player.startArtistRadio(ARTIST);
     player.stopStation();
     expect(player.station).toBeNull();
     expect(player.state.queue).toHaveLength(25);
   });
 
   it("is remembered with the queue", async () => {
-    await player.startArtistRadio(AM);
+    await player.startArtistRadio(ARTIST);
     setActivePinia(createPinia());
     artistRadioServer();
     signIn();
     const restored = usePlayerStore();
     await nextTick();
-    expect(restored.station).toEqual({ kind: "artist", ...AM });
+    expect(restored.station).toEqual({ kind: "artist", ...ARTIST });
   });
 
   it("leaves the queue alone when there's nothing to play", async () => {

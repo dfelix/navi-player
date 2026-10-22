@@ -54,7 +54,8 @@ describe("log history", () => {
 
 describe("maskSecrets", () => {
   it("leaves ordinary text alone", () => {
-    const text = '/get?artist_name=Queen&track_name=A Kind of Magic: "s" and "t" are letters';
+    const text =
+      '/get?artist_name=Velvet Orchid&track_name=Slow Burning Light: "s" and "t" are letters';
     expect(maskSecrets(text)).toBe(text);
   });
 

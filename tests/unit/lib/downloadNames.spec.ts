@@ -5,13 +5,15 @@ const s = (title: string, extra: Partial<Song> = {}) => ({ id: title, title, ...
 
 describe("download names", () => {
   it("replaces characters file systems refuse", () => {
-    expect(sanitizeName('AC/DC: "Back" <in> Black?')).toBe("AC_DC_ _Back_ _in_ Black_");
+    expect(sanitizeName('EX/IT: "Run" <for> Cover?')).toBe("EX_IT_ _Run_ _for_ Cover_");
     expect(sanitizeName("   ")).toBe("untitled");
   });
 
   it("names a single song by track number, or artist and title", () => {
     expect(songFileName(s("Airbag", { track: 1, suffix: "flac" }))).toBe("01 Airbag.flac");
-    expect(songFileName(s("Creep", { artist: "Radiohead" }), "mp3")).toBe("Radiohead - Creep.mp3");
+    expect(songFileName(s("Low Tide", { artist: "Lighthouse" }), "mp3")).toBe(
+      "Lighthouse - Low Tide.mp3",
+    );
     expect(songFileName(s("Untitled"))).toBe("Untitled.mp3");
   });
 

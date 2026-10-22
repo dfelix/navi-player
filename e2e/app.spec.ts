@@ -25,12 +25,12 @@ const ALBUMS = Array.from({ length: 6 }, (_, i) => ({
 }));
 
 // Last.fm's shape for a name several acts share: one run-on paragraph.
-const PLUTO_BIO =
-  "There are multiple artists named Pluto: 1) Pluto, also known as BIG PLUTO, is a rapper from Atlanta. " +
-  "2) Pluto is a Portuguese rock band formed in 2002 after Ornatos Violeta ended. Their debut album, " +
-  "Bom Dia, reached 6th place in the charts. 3) Pluto was a 1990s club project; the album Rising came " +
-  "out in 1996. 4) Pluto was a Norwegian composer. 5) Pluto was a New Zealand rock band. " +
-  '<a href="https://www.last.fm/music/Pluto">Read more on Last.fm</a>';
+const LUMEN_BIO =
+  "There are multiple artists named Lumen: 1) Lumen, also known as BIG LUMEN, is a rapper from Atlanta. " +
+  "2) Lumen is a Portuguese rock band formed in 2002 after The Quiet Hours ended. Their debut album, " +
+  "Bom Dia, reached 6th place in the charts. 3) Lumen was a 1990s club project; the album Rising came " +
+  "out in 1996. 4) Lumen was a Norwegian composer. 5) Lumen was a New Zealand rock band. " +
+  '<a href="https://www.last.fm/music/Lumen">Read more on Last.fm</a>';
 
 const ok = (body: Record<string, unknown> = {}) => ({
   "subsonic-response": {
@@ -69,16 +69,16 @@ function subsonic(endpoint: string): Record<string, unknown> {
     case "getArtist.view":
       return ok({
         artist: {
-          id: "ar-pluto",
-          name: "Pluto",
+          id: "ar-lumen",
+          name: "Lumen",
           albumCount: 1,
           album: [
-            { id: "al-bom", name: "Bom Dia", artist: "Pluto", artistId: "ar-pluto", year: 2004 },
+            { id: "al-bom", name: "Bom Dia", artist: "Lumen", artistId: "ar-lumen", year: 2004 },
           ],
         },
       });
     case "getArtistInfo2.view":
-      return ok({ artistInfo2: { biography: PLUTO_BIO } });
+      return ok({ artistInfo2: { biography: LUMEN_BIO } });
     case "getRandomSongs.view":
       return ok({ randomSongs: { song: [] } });
     default:
@@ -294,7 +294,7 @@ test.describe("NaviPlayer", () => {
 
   test("artist page picks this artist's entry from a shared Last.fm bio", async ({ page }) => {
     await signIn(page);
-    await page.goto("/artist/ar-pluto");
+    await page.goto("/artist/ar-lumen");
     const bio = page.locator(".bio");
     await expect(bio).toContainText("Portuguese rock band");
     await expect(bio).not.toContainText("Atlanta");
