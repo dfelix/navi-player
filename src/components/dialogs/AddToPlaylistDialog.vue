@@ -7,6 +7,7 @@ import { computed, ref, watch } from "vue";
 import AppIcon from "@/components/base/AppIcon.vue";
 import BaseDialog from "@/components/base/BaseDialog.vue";
 import { formatCount } from "@/lib/format";
+import { ownsPlaylist } from "@/lib/playlists";
 import { qk, queryClient } from "@/lib/query";
 import { useSessionStore } from "@/stores/session";
 import { useUiStore } from "@/stores/ui";
@@ -39,10 +40,9 @@ const { data: playlists } = useQuery(() => ({
 }));
 
 // Your playlists only: you can't add to anyone else's.
-const mine = computed(() => {
-  const me = session.client?.username;
-  return (playlists.value ?? []).filter((pl) => !me || !pl.owner || pl.owner === me);
-});
+const mine = computed(() =>
+  (playlists.value ?? []).filter((pl) => ownsPlaylist(pl, session.client?.username)),
+);
 
 async function addToExisting(id: string, name: string): Promise<void> {
   const ids = ui.addToPlaylistIds;

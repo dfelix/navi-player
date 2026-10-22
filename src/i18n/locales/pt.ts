@@ -221,6 +221,7 @@ const pt: MessageSchema = {
     lateNight: "Noite dentro",
     morning: "Bom dia",
     pickingSurprise: "A escolher algo…",
+    publicPlaylists: "Listas de reprodução públicas",
     randomAlbums: "Álbuns ao acaso",
     recentlyAdded: "Adicionados recentemente",
     recentlyPlayed: "Ouvidos recentemente",
@@ -336,6 +337,7 @@ const pt: MessageSchema = {
     makePublicConfirm:
       "Tornar esta lista pública? Todos os utilizadores deste servidor vão poder vê-la.",
     ownedBy: "Pertence a {owner}",
+    publicByOthers: "Listas de reprodução públicas",
     private: "Privada",
     privateHint: "Privada — só você a pode ver. Clique para a tornar pública.",
     public: "Pública",
@@ -343,6 +345,7 @@ const pt: MessageSchema = {
     rename: "Mudar o nome",
     uploadCover: "Enviar foto de capa",
     uploadCoverHint: "Enviar uma foto de capa",
+    yours: "As suas listas de reprodução",
   },
   queue: {
     autoplayNext: "Reprodução automática a seguir",

@@ -217,6 +217,7 @@ const en = {
     lateNight: "Late night",
     morning: "Good morning",
     pickingSurprise: "Picking something…",
+    publicPlaylists: "Public playlists",
     randomAlbums: "Random albums",
     recentlyAdded: "Recently added",
     recentlyPlayed: "Recently played",
@@ -331,6 +332,7 @@ const en = {
     kind: "Playlist",
     makePublicConfirm: "Make this playlist public? Everyone on this server will be able to see it.",
     ownedBy: "Owned by {owner}",
+    publicByOthers: "Public playlists",
     private: "Private",
     privateHint: "Private — only you can see this. Click to make public.",
     public: "Public",
@@ -338,6 +340,7 @@ const en = {
     rename: "Rename",
     uploadCover: "Upload cover photo",
     uploadCoverHint: "Upload a cover photo",
+    yours: "Your playlists",
   },
   queue: {
     autoplayNext: "Autoplay next",

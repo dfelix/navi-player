@@ -1,5 +1,5 @@
-// Starting playback of things whose songs aren't loaded yet: an album or
-// artist from a card or menu, Surprise Me, radios.
+// Starting playback of things whose songs aren't loaded yet: an album,
+// playlist or artist from a card or menu, Surprise Me, radios.
 
 import type { Song } from "@/api/types";
 import { t } from "@/i18n";
@@ -27,6 +27,11 @@ export async function queueAlbum(albumId: string, position: "next" | "end"): Pro
   const player = usePlayerStore();
   if (position === "next") player.playNext(song);
   else player.addToQueue(song);
+}
+
+export async function playPlaylist(playlistId: string, shuffle = false): Promise<void> {
+  const c = client();
+  if (c) play((await c.getPlaylist(playlistId)).entry, shuffle);
 }
 
 // Every album of the artist, in the order Navidrome lists them.

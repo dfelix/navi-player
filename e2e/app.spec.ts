@@ -59,6 +59,8 @@ function subsonic(endpoint: string): Record<string, unknown> {
         playlists: {
           playlist: [
             { id: "pl-1", name: "Road trip", owner: "alice", songCount: 3, public: false },
+            { id: "pl-2", name: "Kitchen songs", owner: "bob", songCount: 5, public: true },
+            { id: "pl-3", name: "Morning run", owner: "alice", songCount: 8, public: true },
           ],
         },
       });
@@ -189,6 +191,25 @@ test.describe("NaviPlayer", () => {
   test("signs in, uses the configured server and keeps the session", async ({ page, baseURL }) => {
     await signIn(page);
     await expect(page.locator(".sidebar")).toContainText("Road trip");
+    // The sidebar keeps to your own playlists.
+    await expect(page.locator(".sidebar")).not.toContainText("Kitchen songs");
+    // Home lists other people's public playlists: not private ones, not yours.
+    const row = page.locator(".home-section", { hasText: "Public playlists" });
+    await expect(row.locator(".card")).toHaveCount(1);
+    await expect(row.locator(".card")).toContainText("Kitchen songs");
+
+    // "See all" lists yours, then other people's public ones.
+    await row.getByRole("link", { name: "See all" }).click();
+    await expect(page).toHaveURL(/\/playlists$/);
+    await expect(page.locator(".page-title")).toHaveText("Playlists");
+    const cards = page.locator(".grid .card");
+    await expect(cards).toHaveText([
+      /Road trip\s*3 tracks/,
+      /Morning run\s*8 tracks/,
+      /Kitchen songs\s*bob/,
+    ]);
+    await page.screenshot({ path: join(SHOTS, "playlists.png") });
+    await page.goBack();
 
     // Every API request went to the configured server (proxied on this origin).
     expect(seen.api.length).toBeGreaterThan(1);

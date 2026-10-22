@@ -10,6 +10,7 @@ import logoUrl from "@/assets/logo.svg";
 import { APP_NAME } from "@/lib/branding";
 import { readSongIds, SONGS_MIME } from "@/lib/dragSongs";
 import { log } from "@/lib/log";
+import { ownsPlaylist } from "@/lib/playlists";
 import { qk, queryClient } from "@/lib/query";
 import { useServerConfigStore } from "@/stores/serverConfig";
 import { useSessionStore } from "@/stores/session";
@@ -49,12 +50,11 @@ const { data: playlists } = useQuery(() => ({
   enabled: !!session.client,
 }));
 
-// Your own playlists only. Navidrome also lists everyone else's public ones,
-// which would be a surprise on a shared server.
-const myPlaylists = computed(() => {
-  const me = session.client?.username;
-  return (playlists.value ?? []).filter(({ owner }) => !me || !owner || owner === me);
-});
+// Your own playlists only. Other people's public ones are on Home and the
+// Playlists page.
+const myPlaylists = computed(() =>
+  (playlists.value ?? []).filter((pl) => ownsPlaylist(pl, session.client?.username)),
+);
 
 const serverLabel = computed(() => session.apiBase?.replace(/^https?:\/\//, "") ?? "");
 
