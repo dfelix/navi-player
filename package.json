@@ -1,6 +1,6 @@
 {
   "name": "navi-player",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A dark, album-art-first web client for a single Navidrome music library",
   "type": "module",
   "private": true,
